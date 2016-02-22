@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% load staticfiles %}
+
+{% block title %}: Main{% endblock title %}
+
+{% block local_css %}
+    <link rel="stylesheet" type="text/css" href="{% static "css/authorization/style.css" %}">
+{% endblock local_css %}
+
+{% block content %}
+    <div class="page-header">
+        <p class="col-sm-offset-10 col-sm-2">
+            <a href="#" class="col-sm-6"><img width="50px" src="{% static "images/main/search_icon.png" %}" alt=""></a>
+            <a href="#" class="col-sm-offset-1 col-sm-5"><img width="50px" src="{% static "images/main/settings_icon.png" %}" alt=""></a>
+        </p>
+    </div>
+    <br>
+    <br>
+    <br>
+    <br>
+    <div class="col-sm-offset-2 col-sm-8">
+        <h1 class="brand col-sm-12">Deer Notes</h1>
+        <img class="col-sm-4" src="{% static 'images/main/deez_notes_logo.png' %}">
+        <p class="slogan col-sm-8">Find anything <br>under 10 seconds,<br> guaranteed!</p>
+    </div>
+{% endblock content %}
