@@ -9,17 +9,13 @@
 
 {% block content %}
     <div class="page-header">
-        <p class="col-sm-offset-9 col-sm-3">
+        <p class="pull-right">
             <a href="#" class="btn btn-default sign-up-btn">Sign Up Free</a>
-            <a href="{% url 'auth:login' %}" class="col-sm-offset-1">Log In</a>
+            <a href="{% url 'auth:login' %}" class="log-in-btn" style="display: inline-block;  text-align: center; width: 100px;">Log In</a>
         </p>
     </div>
-    <br>
-    <br>
-    <br>
-    <br>
-    <div class="col-sm-offset-2 col-sm-8">
-        <h1 class="brand col-sm-12">Deer Notes</h1>
+    <div class="welcome-cont col-sm-offset-2 col-sm-8">
+        <h1 class="brand col-sm-12">Deez Notes</h1>
         <img class="col-sm-4" src="{% static 'images/main/deez_notes_logo.png' %}">
         <p class="slogan col-sm-8">Find anything <br>under 10 seconds,<br> guaranteed!</p>
     </div>

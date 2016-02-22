@@ -17,4 +17,16 @@
 .sign-up-btn {
     background-color: #00BFFF;
     border: none;
+    margin-right: 10px;
+}
+
+.log-in-btn {
+    display: inline-block;
+    text-align: center;
+    width: 100px;
+    color: #000;
+}
+
+.welcome-cont {
+    margin-top: 150px;
 }
