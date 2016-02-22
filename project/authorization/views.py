@@ -1,9 +1,9 @@
 from django.shortcuts import render
-from django.views.generic import TemplateView, FormView
+from django.views.generic import FormView, RedirectView
 from django.contrib.auth import (login as app_login,
                                  logout as app_logout)
 from django.conf import settings
-from django.core.urlresolvers import reverse_lazy
+from django.core.urlresolvers import reverse_lazy, reverse
 from django.http import HttpResponseRedirect, HttpResponse
 
 from dropbox import DropboxOAuth2Flow
@@ -12,8 +12,8 @@ from dropbox import oauth
 from .forms import AuthenticationForm, RegistrationForm
 
 
-class WelcomeView(TemplateView):
-    template_name = 'authorization/welcome.html'
+class DropBoxAuthView(RedirectView):
+    url = reverse_lazy('auth:login')
 
 
 class LoginView(FormView):
@@ -27,7 +27,7 @@ class LoginView(FormView):
             app_login(self.request, user)
             return super(LoginView, self).form_valid(form)
         else:
-            print 'no'
+            return HttpResponseRedirect(reverse('auth:dropbox_auth'))
 
 
 class RegisterView(FormView):
