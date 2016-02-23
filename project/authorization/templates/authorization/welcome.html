@@ -10,7 +10,7 @@
 {% block content %}
     <div class="page-header">
         <p class="pull-right">
-            <a href="#" class="btn btn-default sign-up-btn">Sign Up Free</a>
+            <a href="{% url 'auth:register' %}" class="btn btn-default sign-up-btn">Sign Up Free</a>
             <a href="{% url 'auth:login' %}" class="log-in-btn" style="display: inline-block;  text-align: center; width: 100px;">Log In</a>
         </p>
     </div>

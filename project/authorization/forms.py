@@ -20,9 +20,8 @@ class AuthenticationForm(AuthenticationForm):
         password {string} -- user password
 
     """
-    def confirm_login_allowed(self, user, *args, **kwargs):
-        if not user.is_active:
-            print 'not active'
+    def confirm_login_allowed(self, user):
+        pass
 
     class Meta:
         model = User

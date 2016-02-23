@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% load staticfiles %}
+
+{% block title %}: Login{% endblock title %}
+
+{% block local_css %}
+    <link rel="stylesheet" type="text/css" href="{% static "css/authorization/style.css" %}">
+{% endblock local_css %}
+
+{% block content %}
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <div class="col-sm-offset-2 col-sm-8">
+        {{request.user}}
+        <form action="" method="POST" class="col-sm-8 col-sm-offset-4">
+            {% csrf_token %}
+            {% for field in form %}
+            <div class="form-group">
+                <label for="exampleInputEmail1">{{ field.label }}</label>
+                <input type="{{ field.field.widget.input_type }}" name="{{ field.name }}" class="form-control" id="exampleInputEmail1" placeholder="{{ field.name }}">
+            </div>
+            {% endfor %}
+            <button class="btn btn-default col-sm-6">Registration</button>
+            <button class="btn btn-default col-sm-offset-1 col-sm-5">Stay logged on</button>
+        </form>
+    </div>
+{% endblock content %}
