@@ -43,6 +43,7 @@ THIRD_PARTY_APPS = [
 PROJECT_APPS = [
     'authorization',
     'notes',
+    'dropbox_api',
 ]
 
 INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + PROJECT_APPS

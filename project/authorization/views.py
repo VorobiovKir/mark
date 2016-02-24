@@ -1,19 +1,13 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import redirect
 from django.views.generic import FormView, RedirectView
 from django.contrib.auth import (login as app_login,
                                  logout as app_logout)
 from django.contrib.auth import authenticate
-from django.conf import settings
 from django.core.urlresolvers import reverse_lazy, reverse
-from django.http import (HttpResponseRedirect, HttpResponse,
-                         HttpResponseForbidden)
-from django.contrib.auth.models import User
+from django.http import HttpResponseRedirect
 
-from dropbox import DropboxOAuth2Flow
-from dropbox import oauth
 
 from .forms import AuthenticationForm, RegistrationForm
-from .models import Dropbox
 
 
 class LoginView(FormView):
@@ -27,7 +21,7 @@ class LoginView(FormView):
         if user.is_active:
             return super(LoginView, self).form_valid(form)
         else:
-            return HttpResponseRedirect(reverse('auth:dropbox_auth_start'))
+            return HttpResponseRedirect(reverse('dropbox:auth_start'))
 
 
 class RegisterView(FormView):
@@ -70,50 +64,27 @@ class RegisterView(FormView):
 
         if user is not None:
             app_login(self.request, user)
-            return redirect(reverse('auth:dropbox_auth_start'))
+            return redirect(reverse('dropbox:auth_start'))
 
         # return redirect(reverse('auth:register'))
         return super(RegistrationForm, self).form_valid(form)
 
 
-def get_dropbox_auth_flow(web_app_session):
-    redirect_uri = '{}auth/dropbox_auth_finish/'.format(settings.SITE_PATH)
-    return DropboxOAuth2Flow(
-        settings.DROPBOX_APP_KEY, settings.DROPBOX_APP_SECRET,
-        redirect_uri, web_app_session, "dropbox-auth-csrf-token")
+class LogoutView(RedirectView):
+    """Logout View
 
+    If User is authenticated doing log out User from site
 
-# URL handler for /dropbox-auth-start
-def dropbox_auth_start(request):
-    authorize_url = get_dropbox_auth_flow(request.session).start()
-    return HttpResponseRedirect(authorize_url)
+    Extends:
+        django.views.generic.RedirectView
 
+    Variables:
+        url {str} -- redirect if success logout
 
-# URL handler for /dropbox-auth-finish
-def dropbox_auth_finish(request):
-    try:
-        access_token, user_id, url_state = \
-            get_dropbox_auth_flow(request.session).finish(request.GET)
-    except oauth.BadRequestException, e:
-        return HttpResponse(status=400)
-    except oauth.BadStateException, e:
-        # Start the auth flow again.
-        return HttpResponseRedirect(
-            '{}dropbox_auth_start/'.format(settings.SITE_PATH))
-    except oauth.CsrfException, e:
-        return HttpResponseForbidden()
-    except oauth.NotApprovedException, e:
-        raise e
-    except oauth.ProviderException, e:
-        raise e
+    """
+    url = reverse_lazy('auth:login')
 
-    if access_token:
-        user = request.user
-        user.is_active = True
-        user.save()
-        dropbox = Dropbox.objects.get_or_create(user=user)[0]
-        dropbox.access_token = access_token
-        dropbox.save()
-        # user.backend = settings.AUTHENTICATION_BACKENDS[0]
-        # app_login(request, user)
-    return redirect(reverse('notes:main'))
+    def get(self, request, *args, **kwargs):
+        if request.user.is_authenticated():
+            app_logout(request)
+        return super(LogoutView, self).get(request, *args, **kwargs)

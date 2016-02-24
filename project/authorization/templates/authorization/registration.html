@@ -15,7 +15,6 @@
     <br>
     <br>
     <div class="col-sm-offset-2 col-sm-8">
-        {{request.user}}
         <form action="" method="POST" class="col-sm-8 col-sm-offset-4">
             {% csrf_token %}
             {% for field in form %}
