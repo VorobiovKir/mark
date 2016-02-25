@@ -10,5 +10,9 @@ urlpatterns = [
     url(r'^get_notes/$', views.dropbox_get_notes,
         name='get_notes'),
     url(r'^get_notes_alt/$', views.dropbox_get_notes_version_alt,
-        name='get_notes_alt')
+        name='get_notes_alt'),
+    url(r'^search/$', views.dropbox_search, name='search'),
+    url(r'^get_file/$', views.dropbox_get_file, name='get_file'),
+    url(r'^get_notes_final/$', views.dropbox_get_notes_version_search,
+        name='get_notes_final')
 ]
