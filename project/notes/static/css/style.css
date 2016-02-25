@@ -1,0 +1,11 @@
+.page-header {
+    border: none;
+}
+
+.search-btn, .settings-btn {
+    margin-top: 20px;
+}
+
+.search-btn {
+    margin-right: 20px;
+}

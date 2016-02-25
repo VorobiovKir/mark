@@ -8,5 +8,5 @@ class MainView(TemplateView):
 
     def dispatch(self, request, *args, **kwargs):
         if not request.user.is_active:
-            return redirect(reverse('dropbox:auth_start'))
+            return redirect(reverse('auth:logout'))
         return super(MainView, self).dispatch(request, *args, **kwargs)

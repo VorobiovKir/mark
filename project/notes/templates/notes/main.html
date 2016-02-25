@@ -4,17 +4,19 @@
 {% block title %}: Main{% endblock title %}
 
 {% block local_css %}
-
+    <link rel="stylesheet" type="text/css" href="{% static "css/style.css" %}">
 {% endblock local_css %}
 
 {% block content %}
     <div class="page-header">
-        <p class="col-sm-1">
+        <div class="row">
             <img width="80px" src="{% static 'images/main/deez_notes_logo.png' %}">
-        </p>
+            <p class="pull-right">
+                <a href="#"><img width="50px" src="{% static "images/main/search_icon.png" %}" class="search-btn" alt=""></a>
+                <a href="#"><img width="50px" src="{% static "images/main/settings_icon.png" %}" alt="" class="settings-btn"></a>
+            </p>
+        </div>
         <p class="col-sm-offset-9 col-sm-2">
-            <a href="#" class="col-sm-6"><img width="50px" src="{% static "images/main/search_icon.png" %}" alt=""></a>
-            <a href="#" class="col-sm-offset-1 col-sm-5"><img width="50px" src="{% static "images/main/settings_icon.png" %}" alt=""></a>
         </p>
     </div>
     <br>
