@@ -2,8 +2,7 @@
 __pycache__/
 *.py[cod]
 
-#local_settings
-local_settings.py
+# local_settings
 dev_shell.py
 
 claims/
