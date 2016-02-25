@@ -1,30 +1,35 @@
-{% extends "base.html" %}
+{% extends "authorization.html" %}
 {% load staticfiles %}
 
-{% block title %}: Login{% endblock title %}
+{% block title %}: Registration{% endblock title %}
 
-{% block local_css %}
-    <link rel="stylesheet" type="text/css" href="{% static "css/authorization/style.css" %}">
-{% endblock local_css %}
 
 {% block content %}
-    <br>
-    <br>
-    <br>
-    <br>
-    <br>
-    <br>
-    <div class="col-sm-offset-2 col-sm-8">
-        <form action="" method="POST" class="col-sm-8 col-sm-offset-4">
-            {% csrf_token %}
-            {% for field in form %}
-            <div class="form-group">
-                <label for="exampleInputEmail1">{{ field.label }}</label>
-                <input type="{{ field.field.widget.input_type }}" name="{{ field.name }}" class="form-control" id="exampleInputEmail1" placeholder="{{ field.name }}">
-            </div>
-            {% endfor %}
-            <button class="btn btn-default col-sm-6">Registration</button>
-            <button class="btn btn-default col-sm-offset-1 col-sm-5">Stay logged on</button>
-        </form>
+    <div class="col-sm-offset-1 col-sm-9 login-cont">
+        <div class="row">
+            <img class="col-sm-3 col-xs-12 logo_man" src="{% static 'images/main/deez_notes_logo.png' %}">
+            <form action="" method="POST" class="col-sm-offset-1 col-sm-8 login-form col-xs-12">
+                {% csrf_token %}
+                {% for error in form.non_field_errors %}
+                    <p class="errors-form bg-danger">{{ error }}</p>
+                {% endfor %}
+                {% for field in form %}
+                <div class="form-group">
+                    <label for="{{ field.name }}">{{ field.label }}</label>
+                    {% for error in field.errors %}
+                        <p class="errors-form bg-danger">{{ error }}</p>
+                    {% endfor %}
+                    <input type="{{ field.field.widget.input_type }}" name="{{ field.name }}" class="form-control" id="{{ field.name }}" placeholder="{{ field.label }}">
+                </div>
+                {% endfor %}
+                <div class="form-group">
+                    <div class="row">
+                        <div class="col-xs-12">
+                            <button class="btn login_btn btn-block">Registration</button>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
     </div>
 {% endblock content %}
