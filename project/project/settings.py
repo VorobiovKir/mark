@@ -20,9 +20,9 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # See https://docs.djangoproject.com/en/1.9/howto/deployment/checklist/
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -37,7 +37,7 @@ DJANGO_APPS = [
 ]
 
 THIRD_PARTY_APPS = [
-    'debug_toolbar',
+    # 'debug_toolbar',
 ]
 
 PROJECT_APPS = [
@@ -133,10 +133,10 @@ USE_TZ = True
 STATIC_URL = '/static/'
 
 STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, "authorization/static"),
-    os.path.join(BASE_DIR, "notes/static"),
     os.path.join(BASE_DIR, "static"),
 ]
+
+STATIC_ROOT = os.path.join(os.path.dirname(BASE_DIR), 'static')
 
 try:
     from local_settings import *

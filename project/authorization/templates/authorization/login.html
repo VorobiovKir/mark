@@ -12,7 +12,7 @@
 <div class="container">
     <div class="col-sm-offset-1 col-sm-9 login-cont">
         <div class="row">
-            <img class="col-sm-3 col-xs-12 logo_man" src="{% static 'images/main/deez_notes_logo.png' %}">
+            <img class="col-sm-3 col-xs-12 logo_man" src="{% static 'main/images/deez_notes_logo.png' %}">
             <form action="" method="POST" class="col-sm-offset-1 col-sm-8 login-form col-xs-12">
                 {% csrf_token %}
                 {% for error in form.non_field_errors %}
