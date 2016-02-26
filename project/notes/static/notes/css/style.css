@@ -1,11 +1,35 @@
+@import url(https://fonts.googleapis.com/css?family=Roboto);
+
+.main-container {
+    font-family: Roboto;
+    font-size: 16px;
+}
+
 .page-header {
     border: none;
+    width: 100%;
 }
-
 .search-btn, .settings-btn {
     margin-top: 20px;
+    margin-right: 30px;
+}
+.daily_journal, .notebook_icon, .tag_icon{
+    position:fixed;
+    bottom:20%;
+    left:30px;
+}
+.notebook_icon{
+    bottom:40%;
+}
+.daily_journal{
+    bottom:60%;
+}
+.main{
+    margin-left:30px;
 }
 
-.search-btn {
-    margin-right: 20px;
-}
+/*@media (min-width: 300px) {
+    .container {
+       margin-left: 60px;
+    }
+}*/

@@ -4,6 +4,7 @@
 {% block title %}: Welcome{% endblock title %}
 
 {% block content %}
+<div class="container">
     <div class="page-header">
         <p class="pull-right">
             <a href="{% url 'auth:register' %}" class="btn sign-up-btn">Sign Up Free</a>
@@ -17,4 +18,5 @@
             <p class="slogan col-sm-7 col-xs-12">Find anything <br>under 10 seconds,<br> guaranteed!</p>
         </div>
     </div>
+</div>
 {% endblock content %}
