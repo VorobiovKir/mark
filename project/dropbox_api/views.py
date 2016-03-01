@@ -237,7 +237,12 @@ def dropbox_get_notes_version_alt(request):
 
                                                     days.append(clean_file.path_lower)
 
-    return JsonResponse({'days': custom_funcs.sorted_by_time(days)})
+    res_list = custom_funcs.sorted_by_time(days)
+    res_dict = {}
+    for file in res_list:
+        res_dict = custom_funcs.format_date(file, res_dict)
+
+    return JsonResponse({'res_list': res_list, 'res_dict': res_dict})
 
 
 # FILTER_REGEXP = [
