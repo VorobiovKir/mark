@@ -28,6 +28,7 @@ class LoginView(FormView):
     """
     template_name = 'authorization/login.html'
     form_class = AuthenticationForm
+    success_url = reverse_lazy('notes:main')
 
     def form_valid(self, form):
         """Login form valid
@@ -64,6 +65,7 @@ class RegisterView(FormView):
     """
     form_class = RegistrationForm
     template_name = 'authorization/registration.html'
+    success_url = reverse_lazy('notes:main')
 
     def form_valid(self, form):
         """Registration form Valid

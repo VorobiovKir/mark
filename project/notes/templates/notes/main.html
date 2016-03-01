@@ -129,9 +129,20 @@
         <h1 class="text-center">Hello, {{ request.user.username|title }}!</h1>
         <br/>
         <p class="text-center">This is a main Page</p>
-        <!-- <div class="timeliner pull-right">
-            <ul>
-                <li>2004 &#8212;</li>
+        <div class="timeliner pull-right">
+            <ul class="timeliner">
+                <li>2003 &#8212;</li>
+                <li>2004 &#8212;
+                    <ul class="timeliner-month">
+                        <li>may -
+                            <ul class="timeliner-day">
+                                <li><p class="date">San 25</p></li>
+                                <li><p class="date">Mon 26</p></li>
+                            </ul>
+                        </li>
+                        <li>sep -</li>
+                    </ul>
+                </li>
                 <p class="date">May 25, 2004</p>
                 <p class="date">May 28, 2004</p>
                 <p class="date">May 25, 2004</p>
@@ -141,8 +152,8 @@
                 <li>2009 &#8212;</li>
                 <li>2012 &#8212;</li>
             </ul>
-        </div>-->
-        <div class="panel">
+        </div>
+        <!-- <div class="panel">
             <div class="panel-heading">
                 <span class="panel-date">Tues, May 25, 2014</span>
                 <div class="select-style">
@@ -161,26 +172,29 @@
                         <option value="audi">Audi</option>
                     </select>
                 </div>
-                <!-- <div class="select-style">
+                <div class="select-style">
                     <div style="text-align: center; overflow: hidden; width: 100%; height: 30px; border: 1px solid  #00BFFF; background-color:  #00BFFF;">
                         <div style="color: #fff;">Insert File</div>
                         <input type="file" name="file" id="file" size="1" style="margin-top: -50px; margin-left:-410px; -moz-opacity: 0; filter: alpha(opacity=0); opacity: 0; font-size: 150px; height: 100px;">
                     </div>
-                </div> -->
-            </div>
-            <div class="panel-body"><div>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Quisquam quas, consectetur, saepe sunt sed corrupti sapiente reprehenderit repudiandae. Cumque similique sit amet maiores, magni, obcaecati rem libero a nemo harum.</div>
-            <div>Libero cupiditate inventore veniam, sed rem error quo aperiam ullam earum, dolore placeat blanditiis. Corporis nobis quo ad earum similique amet facilis, veniam velit. Aspernatur, harum omnis ullam architecto laborum.</div>
-            <div>Ipsum impedit rem repudiandae inventore, quam quis quidem amet. Ipsa id labore doloribus eaque assumenda repudiandae nulla exercitationem deserunt rerum, laudantium dolorum, saepe illum impedit. Ipsa incidunt voluptatem, at ex.</div>
-            <div>Unde ipsam reiciendis nobis excepturi ducimus repellat eligendi blanditiis in asperiores architecto, quo dolore non, fuga, aliquid, provident quos. Doloribus dolores sequi eligendi. Aliquam, quia odio, iusto reiciendis officia illum.</div>
-            <div>Dolor voluptate rem libero necessitatibus, porro ratione mollitia consectetur architecto cumque impedit nulla eveniet quaerat dignissimos ducimus ipsa quisquam iure alias commodi saepe ea error pariatur repudiandae tempore praesentium! Obcaecati!</div>
-            <div class="row">
-                <br>
-                <div class="pull-right file-icons">
-                    <a href="https://dl.dropboxusercontent.com/content_link/rkx0anGekfrrBM6QiVnU8gP0Zal12BlkhRM49zUqcqISZJyBwqQXfbBdAS2KyNZ1/file" target="_blank"><img width="50" src="{% static "main/images/text.png" %}" data-toggle="tooltip" data-placement="top" title="deez_06:49PM.txt" alt="text_file" /></a>
-                    <a href="#"><img width="50" src="{% static "main/images/pdf.png" %}" data-toggle="tooltip" data-placement="top" title="some_name.pdf" alt="pdf_file" /></a>
                 </div>
             </div>
-        </div>
+            <div class="panel-body">
+                <div>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Quisquam quas, consectetur, saepe sunt sed corrupti sapiente reprehenderit repudiandae. Cumque similique sit amet maiores, magni, obcaecati rem libero a nemo harum.</div>
+                <div>Libero cupiditate inventore veniam, sed rem error quo aperiam ullam earum, dolore placeat blanditiis. Corporis nobis quo ad earum similique amet facilis, veniam velit. Aspernatur, harum omnis ullam architecto laborum.</div>
+                <div>Ipsum impedit rem repudiandae inventore, quam quis quidem amet. Ipsa id labore doloribus eaque assumenda repudiandae nulla exercitationem deserunt rerum, laudantium dolorum, saepe illum impedit. Ipsa incidunt voluptatem, at ex.</div>
+                <div>Unde ipsam reiciendis nobis excepturi ducimus repellat eligendi blanditiis in asperiores architecto, quo dolore non, fuga, aliquid, provident quos. Doloribus dolores sequi eligendi. Aliquam, quia odio, iusto reiciendis officia illum.</div>
+                <div>Dolor voluptate rem libero necessitatibus, porro ratione mollitia consectetur architecto cumque impedit nulla eveniet quaerat dignissimos ducimus ipsa quisquam iure alias commodi saepe ea error pariatur repudiandae tempore praesentium! Obcaecati!</div>
+
+                <div class="row">
+                    <br>
+                    <div class="pull-right file-icons">
+                        <a href="#" target="_blank"><img width="50" src="{% static "main/images/text.png" %}" data-toggle="tooltip" data-placement="top" title="deez_06:49PM.txt" alt="text_file" /></a>
+                        <a href="#"><img width="50" src="{% static "main/images/pdf.png" %}" data-toggle="tooltip" data-placement="top" title="some_name.pdf" alt="pdf_file" /></a>
+                    </div>
+                </div>
+            </div>
+        </div> -->
     </div>
 </div>
 {% endblock content %}

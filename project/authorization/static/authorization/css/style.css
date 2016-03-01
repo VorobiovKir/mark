@@ -58,6 +58,17 @@
     border-radius: 4px;
 }
 
+.errors-form-field {
+    padding: 2px 4px;
+    color: #c7254e;
+    font-weight: bold;
+    font-size: 13px;
+}
+
+.input-error {
+    border: 1px solid #c7254e;
+}
+
 @media (min-width: 400px) and (max-width: 768px) {
     .boy {
         width:40%;

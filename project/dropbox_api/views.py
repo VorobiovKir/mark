@@ -13,6 +13,8 @@ from dropbox import DropboxOAuth2Flow, oauth, dropbox
 from dropbox.files import FileMetadata, FolderMetadata
 from dropbox.client import DropboxClient
 
+from generic import custom_funcs
+
 from .models import Dropbox
 
 
@@ -159,7 +161,43 @@ def dropbox_get_notes_version_search(request):
             if re.match(regex, search_match.metadata.path_lower):
                 result.append(search_match.metadata.path_lower)
 
-    return JsonResponse({'days': result})
+    res = {}
+    for file in result:
+        res = custom_funcs.format_date(file, res)
+
+    return JsonResponse({'order res': res, 'unorder res': result})
+
+
+# def format_date(clear_str, res_dict=None):
+#     if not res_dict:
+#         res_dict = {}
+
+#     file_info = clear_str.split('/')
+
+#     try:
+#         res_dict[file_info[1]][file_info[2]][file_info[3]].append(file_info[4])
+#     except:
+#         if file_info[1] in res_dict:
+#             if file_info[2] in res_dict[file_info[1]]:
+#                 res_dict[file_info[1]][file_info[2]].update({
+#                     file_info[3]: [file_info[4]]
+#                 })
+#             else:
+#                 res_dict[file_info[1]].update({
+#                     file_info[2]: {
+#                         file_info[3]: [file_info[4]]
+#                     }})
+#         else:
+#             res_dict.update({
+#                 file_info[1]: {
+#                     file_info[2]: {
+#                         file_info[3]: [file_info[4]]
+#                     }
+#                 }
+#             })
+
+#     return res_dict
+
 
 def dropbox_get_notes_version_alt(request):
     # TEST TEST TEST
@@ -199,7 +237,7 @@ def dropbox_get_notes_version_alt(request):
 
                                                     days.append(clean_file.path_lower)
 
-    return JsonResponse({'days': days})
+    return JsonResponse({'days': custom_funcs.sorted_by_time(days)})
 
 
 # FILTER_REGEXP = [

@@ -17,10 +17,10 @@
                 {% for field in form %}
                 <div class="form-group">
                     <label for="{{ field.name }}">{{ field.label }}</label>
+                    <input type="{{ field.field.widget.input_type }}" name="{{ field.name }}" value="{% if field.name != 'password1' and field.name != 'password2' %}{{ field.value|default_if_none:"" }}{% endif %}" class="form-control {% if field.errors %}input-error{% endif %}" id="{{ field.name }}" placeholder="{{ field.label }}">
                     {% for error in field.errors %}
-                        <p class="errors-form bg-danger">{{ error }}</p>
+                        <p class="errors-form-field">{{ error }}</p>
                     {% endfor %}
-                    <input type="{{ field.field.widget.input_type }}" name="{{ field.name }}" class="form-control" id="{{ field.name }}" placeholder="{{ field.label }}">
                 </div>
                 {% endfor %}
                 <div class="form-group">
