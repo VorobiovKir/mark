@@ -9,7 +9,7 @@ DROPBOX_APP_KEY = 'mrcw8jglsdkv0ic'
 DROPBOX_APP_SECRET = '1czbe7rq0i0eagc'
 DROPBOX_APP_TYPE = 'app_folder'
 
-SITE_PATH = 'http://127.0.0.1:8000/'
+SITE_PATH = 'https://light-it-07.tk/'
 
 
 FOLDER_NAME_MONTH = ['jan', 'feb', 'mar', 'apr', 'may', 'june', 'july',

@@ -7,6 +7,7 @@ from django.http import (HttpResponseRedirect, HttpResponse,
                          HttpResponseForbidden)
 from django.contrib.auth.models import User
 from django.http import JsonResponse
+from django.utils import timezone
 
 from dropbox import DropboxOAuth2Flow, oauth, dropbox
 from dropbox.files import FileMetadata, FolderMetadata
@@ -74,11 +75,27 @@ def dropbox_get_notes(request):
 
 
 def dropbox_create_note(request):
-    pass
+    # TEST TEST TEST
+    text = 'test from view'
+    admin = User.objects.get(pk=1)
+    client = dropbox_get_connection(admin, 'client')
+
+    path = timezone.now().strftime('/%Y/%b/%d/deez_%I:%M%p.txt')
+    client.put_file(path, text)
+
+    return JsonResponse({'status': 'Ok'})
 
 
 def dropbox_edit_note(request):
-    pass
+    # TEST TEST TEST
+    admin = User.objects.get(pk=1)
+    client = dropbox_get_connection(admin, 'client')
+    text = 'test from edit note view'
+    path = '/2016/feb/29/deez_09:27AM (1).txt'
+
+    client.put_file(path, text, overwrite=True)
+
+    return JsonResponse({'status': 'Ok'})
 
 
 def dropbox_get_file(request):

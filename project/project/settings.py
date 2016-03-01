@@ -20,7 +20,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # See https://docs.djangoproject.com/en/1.9/howto/deployment/checklist/
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = ['*']
 
@@ -37,7 +37,7 @@ DJANGO_APPS = [
 ]
 
 THIRD_PARTY_APPS = [
-    # 'debug_toolbar',
+
 ]
 
 PROJECT_APPS = [
@@ -142,3 +142,8 @@ try:
     from local_settings import *
 except ImportError:
     pass
+
+
+if DEBUG:
+    SITE_PATH = 'http://127.0.0.1:8000/'
+    INSTALLED_APPS += ['debug_toolbar']

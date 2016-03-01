@@ -11,11 +11,32 @@ from .forms import AuthenticationForm, RegistrationForm
 
 
 class LoginView(FormView):
+    """Login View
+
+        View allows User enter to system. If User successfully login
+    system check if user is active and has access token, if User hasn't
+    system redirect User to Dropbox authorization to get access_token, if
+    User is active and has access token User redirect on the main page
+
+    Extends:
+        django.views.generic.FormView
+
+    Variables:
+        template_name {str} -- template
+        form_class {obj} -- form for view
+
+    """
     template_name = 'authorization/login.html'
     form_class = AuthenticationForm
-    success_url = reverse_lazy('notes:main')
 
     def form_valid(self, form):
+        """Login form valid
+
+        Login User, Check User's active status, if User is active
+        redirect on the main page, another redirect on Dropbox
+        authorization to get access_token
+
+        """
         user = form.get_user()
         app_login(self.request, user)
         if user.is_active:
@@ -28,9 +49,9 @@ class RegisterView(FormView):
     """Registration View
 
         View allows User registration. If User successfully registration
-    in profile.models.profile create new field with User's slug, activation key
-    and expire day of this key. View generate activation key and send his on
-    User Email for confirmed.
+    User redirect on Dropbox authorization for get access token, if User
+    got token, this token save in DB in Drpopbox Model, than User redirect
+    on the main page
 
     Extends:
         django.views.generic.FormView
@@ -40,19 +61,15 @@ class RegisterView(FormView):
         success_url {str} -- url if User successfully registrated
         form_class {obj} -- form for view
 
-    Methods:
-        form_valid -- Save User, Create Profile[slug],
-            Generate activation key and expire date for confirm email.
-            Send on User's email confirm letter
-
     """
     form_class = RegistrationForm
     template_name = 'authorization/registration.html'
 
     def form_valid(self, form):
-        """Form Valid
+        """Registration form Valid
 
-        If form valid User save.
+        Save User in DB, than login, than redirect on Dropbox authorization
+        to get access token
 
         Return:
             Redirect to Dropbox Api for get access token
@@ -73,7 +90,7 @@ class RegisterView(FormView):
 class LogoutView(RedirectView):
     """Logout View
 
-    If User is authenticated doing log out User from site
+    If User is authenticated, System Logout User
 
     Extends:
         django.views.generic.RedirectView

@@ -8,5 +8,5 @@ class MainView(TemplateView):
 
     def dispatch(self, request, *args, **kwargs):
         if not request.user.is_active:
-            return redirect(reverse('auth:logout'))
+            return redirect(reverse('welcome'))
         return super(MainView, self).dispatch(request, *args, **kwargs)

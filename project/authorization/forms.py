@@ -21,6 +21,11 @@ class AuthenticationForm(AuthenticationForm):
 
     """
     def confirm_login_allowed(self, user):
+        """confirm login allowed
+
+        remove default check on user active, cause system doing
+        this revision after login
+        """
         pass
 
     class Meta:
@@ -45,10 +50,6 @@ class RegistrationForm(UserCreationForm):
         password1 {string} -- user password
         password2 {string} -- confirmed user password
 
-    Methods:
-        clean_email -- raise error if email not unique
-        save -- make user.is_active = False
-
     """
     email = forms.EmailField(required=True)
 
@@ -57,12 +58,22 @@ class RegistrationForm(UserCreationForm):
         fields = ['email', 'username', 'password1', 'password2']
 
     def clean_email(self):
+        """Registration clean email
+
+        Check on unique User email
+
+        """
         email = self.cleaned_data.get('email')
         if User.objects.filter(email=email).exists():
             raise forms.ValidationError(_('Duplicate email'))
         return email
 
     def save(self, commit=True):
+        """registration save
+
+        User's active satus False
+
+        """
         user = super(RegistrationForm, self).save(commit=False)
         if commit:
             user.is_active = False
