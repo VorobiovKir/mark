@@ -1,3 +1,5 @@
+from collections import OrderedDict
+
 from django.conf import settings
 
 
@@ -17,6 +19,9 @@ def format_date(clear_str, res_dict=None):
     """
     if not res_dict:
         res_dict = {}
+
+    # !!!!!!!!!!!!!!!!!!!!!!!!!!!
+    res_dict = OrderedDict(res_dict)
 
     file_info = clear_str.split('/')
 
@@ -59,6 +64,7 @@ def sorted_by_time(clear_file_list):
                                     x.split('/')[2]),
                                  x.split('/')[3]))
 
+# !!!!!!!!!   collections.OrderedDict
 
 # def format_order_date(clear_str, res_dict=None):
 #     """format date

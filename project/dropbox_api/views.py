@@ -18,6 +18,7 @@ from generic import custom_funcs
 from .models import Dropbox
 
 
+# --------------------- AUTHORIZATION VIEWS ---------------------------
 def get_dropbox_auth_flow(web_app_session):
     redirect_uri = '{}dropbox/auth_finish/'.format(settings.SITE_PATH)
     return DropboxOAuth2Flow(
@@ -57,76 +58,10 @@ def dropbox_auth_finish(request):
         dropbox_profile.access_token = access_token
         dropbox_profile.save()
     return redirect(reverse('notes:main'))
+# ------------------------------------------------------------------
 
 
-def dropbox_get_notes(request):
-    # TEST TEST TEST
-    admin = User.objects.get(pk=1)
-
-    dbx = dropbox_get_connection(admin)
-
-    all_files = dbx.files_list_folder('', recursive=True).entries
-    files = []
-    pattern = settings.REGEX_FILES
-    for dirty_file in all_files:
-        if isinstance(dirty_file, FileMetadata):
-            if re.match(pattern, dirty_file.path_lower):
-                files.append(dirty_file.path_lower)
-
-    return JsonResponse({'paths': files, 'length': len(all_files)})
-
-
-def dropbox_create_note(request):
-    # TEST TEST TEST
-    text = 'test from view'
-    admin = User.objects.get(pk=1)
-    client = dropbox_get_connection(admin, 'client')
-
-    path = timezone.now().strftime('/%Y/%b/%d/deez_%I:%M%p.txt')
-    client.put_file(path, text)
-
-    return JsonResponse({'status': 'Ok'})
-
-
-def dropbox_edit_note(request):
-    # TEST TEST TEST
-    admin = User.objects.get(pk=1)
-    client = dropbox_get_connection(admin, 'client')
-    text = 'test from edit note view'
-    path = '/2016/feb/29/deez_09:27AM (1).txt'
-
-    client.put_file(path, text, overwrite=True)
-
-    return JsonResponse({'status': 'Ok'})
-
-
-def dropbox_get_file(request):
-    # TEST TEST TEST
-    admin = User.objects.get(pk=1)
-
-    client = dropbox_get_connection(admin, 'client')
-    path = request.GET.get('path')
-
-    with client.get_file(path) as f:
-        result = f.read()
-
-    return JsonResponse({'content': result})
-
-
-def dropbox_search(request):
-    # TEST TEST TEST
-    admin = User.objects.get(pk=1)
-    dbx = dropbox_get_connection(admin)
-
-    query = request.GET.get('query')
-    result = []
-    matches = dbx.files_search('', query).matches
-
-    for search_match in matches:
-        result.append(search_match.metadata.path_lower)
-    return JsonResponse({'result': result})
-
-
+# --------------------- GET API VIEWS ---------------------------
 def dropbox_get_connection(user, type_connection='dbx'):
     access_token = dropbox_get_access_token(user)
 
@@ -144,8 +79,10 @@ def dropbox_get_access_token(user):
         pass # doing something if hasn't access token
 
     return access_token
+# -----------------------------------------------------------
 
 
+# --------------------- GET NOTES ---------------------------
 def dropbox_get_notes_version_search(request):
     # TEST TEST TEST
     admin = User.objects.get(pk=1)
@@ -166,6 +103,224 @@ def dropbox_get_notes_version_search(request):
         res = custom_funcs.format_date(file, res)
 
     return JsonResponse({'order res': res, 'unorder res': result})
+
+
+def dropbox_get_notes_version_alt(request):
+    # TEST TEST TEST
+    admin = User.objects.get(pk=1)
+
+    dbx = dropbox_get_connection(admin)
+
+    days = []
+    REGEXP_FOR_MONTH_FOLDERS = '{}'.format('|'.join(settings.FOLDER_NAME_MONTH))
+
+    dirty_years_folders = dbx.files_list_folder('').entries
+    for clean_years_folder in dirty_years_folders:
+        if isinstance(clean_years_folder, FolderMetadata):
+            if re.match('(?:19|20)\d\d',
+                clean_years_folder.name):
+
+                dirty_month_folders = \
+                    dbx.files_list_folder(clean_years_folder.path_lower).entries
+                for clean_month_folder in dirty_month_folders:
+                    if isinstance(clean_month_folder, FolderMetadata):
+                        if re.match(REGEXP_FOR_MONTH_FOLDERS,
+                            clean_month_folder.name, re.IGNORECASE):
+
+                            dirty_days_folders = \
+                                dbx.files_list_folder(clean_month_folder.path_lower).entries
+                            for clean_days_folder in dirty_days_folders:
+                                if isinstance(clean_days_folder, FolderMetadata):
+                                    if re.match('\d\d',
+                                        clean_days_folder.name):
+
+                                        dirty_files = \
+                                            dbx.files_list_folder(clean_days_folder.path_lower).entries
+                                        for clean_file in dirty_files:
+                                            if isinstance(clean_file, FileMetadata):
+                                                if re.match('deez_(.*)\.txt$',
+                                                    clean_file.name):
+
+                                                    days.append(clean_file.path_lower)
+
+    res_list = custom_funcs.sorted_by_time(days)
+    res_dict = {}
+    for file in res_list:
+        res_dict = custom_funcs.format_date(file, res_dict)
+
+    return JsonResponse({'res_list': res_list, 'res_dict': res_dict})
+
+
+# def dropbox_get_notes(request):
+#     # TEST TEST TEST
+#     admin = User.objects.get(pk=1)
+
+#     dbx = dropbox_get_connection(admin)
+
+#     all_files = dbx.files_list_folder('', recursive=True).entries
+#     files = []
+#     pattern = settings.REGEX_FILES
+#     for dirty_file in all_files:
+#         if isinstance(dirty_file, FileMetadata):
+#             if re.match(pattern, dirty_file.path_lower):
+#                 files.append(dirty_file.path_lower)
+
+#     return JsonResponse({'paths': files, 'length': len(all_files)})
+
+# -----------------------------------------------------------
+
+
+# --------------------- Create/Edit NOTE ---------------------------
+def dropbox_create_or_edit_note(request):
+    # TEST TEST TEST
+    admin = User.objects.get(pk=1)
+    client = dropbox_get_connection(admin, 'client')
+    new_text = request.GET.get('new_text', 'something_new')
+    note_path = request.GET.get('path')
+
+    action = request.GET.get('action', 'edit')
+    overwrite = bool(action == 'edit')
+
+    if action == 'create':
+        project = request.GET.get('project', settings.DROPBOX_DEFAULT_PROJECT)
+        tag = request.GET.get('project', settings.DROPBOX_DEFAULT_TAG)
+        note_path = \
+            timezone.now().strftime('/%Y/%b/%d/deez_{}_{}_%I:%M%p.txt').format(project, tag)
+
+
+    if new_text:
+        client.put_file(note_path, new_text, overwrite=overwrite)
+        return JsonResponse({'res': 'success'})
+
+
+def dropbox_get_note(request):
+    # TEST TEST TEST
+    admin = User.objects.get(pk=1)
+
+    client = dropbox_get_connection(admin, 'client')
+    path = request.GET.get('path')
+
+    with client.get_file(path) as f:
+        result = f.read()
+
+    return JsonResponse({'content': result})
+
+
+def dropbox_change_meta_note(request):
+    # TEST TEST TEST
+    admin = User.objects.get(pk=1)
+    client = dropbox_get_connection(admin, 'client')
+
+    path = request.GET.get('path')
+    project = request.GET.get('project')
+    tag = request.GET.get('tag')
+    path_list = path.split('/')
+    if client.search('/{}/'.format('/'.join(path_list[1:-1])), path_list[-1]):
+        note_name = path.split('_')
+        if project:
+            note_name[1] = project
+        if tag:
+            note_name[2] = tag
+
+        client.file_move(path, '_'.join(note_name))
+        return JsonResponse({'res': 'success'})
+    else:
+        return JsonResponse({'res': 'file not find'})
+# -----------------------------------------------------------
+
+
+# --------------------- Search Note/Folder ------------------
+def dropbox_search(request):
+    # TEST TEST TEST
+    admin = User.objects.get(pk=1)
+    dbx = dropbox_get_connection(admin)
+
+    query = request.GET.get('query')
+    result = []
+    matches = dbx.files_search('', query).matches
+
+    for search_match in matches:
+        result.append(search_match.metadata.path_lower)
+    return JsonResponse({'result': result})
+# -----------------------------------------------------------
+
+
+# --------------------- META DATA VIEWS ---------------------
+def dropbox_get_meta_files(request):
+    # TEST TEST TEST
+    admin = User.objects.get(pk=1)
+    client = dropbox_get_connection(admin, 'client')
+
+    search_type = request.GET.get('search_type', 'tags')
+    res = dropbox_get_meta_data(search_type, client)
+
+    return JsonResponse({'res': res})
+
+
+def dropbox_get_meta_data(type_meta_data, api):
+    if type_meta_data == 'projects':
+        file_name = settings.DROPBOX_PROJECTS_FILE
+    elif type_meta_data == 'tags':
+        file_name = settings.DROPBOX_TAGS_FILE
+
+    if api.search(settings.DROPBOX_META_PATH, file_name):
+        file = api.get_file(settings.DROPBOX_META_PATH + file_name)
+        return filter(None, file.read().split('\n'))
+    else:
+        return []
+
+
+def dropbox_add_or_del_meta_files(request):
+    # TEST TEST TEST
+    admin = User.objects.get(pk=1)
+    client = dropbox_get_connection(admin, 'client')
+
+    search_type = request.GET.get('search_type', 'tags')
+    query_name = request.GET.get('query_name', '')
+    action = request.GET.get('action', '')
+
+    if search_type == 'projects':
+        file_name = settings.DROPBOX_PROJECTS_FILE
+    elif search_type == 'tags':
+        file_name = settings.DROPBOX_TAGS_FILE
+
+    if query_name:
+        res = dropbox_get_meta_data(search_type, client)
+        if action == 'add':
+            if query_name not in res:
+                res.append(query_name)
+        elif action == 'delete':
+            if query_name in res:
+                res.remove(query_name)
+        client.put_file(settings.DROPBOX_META_PATH + file_name, '\n'.join(res),
+                        overwrite=True)
+        return JsonResponse({'res': 'success'})
+# -----------------------------------------------------------
+
+
+# def dropbox_create_note(request):
+#     # TEST TEST TEST
+#     admin = User.objects.get(pk=1)
+#     client = dropbox_get_connection(admin, 'client')
+#     text = 'test from view'
+
+#     path = timezone.now().strftime('/%Y/%b/%d/deez_%I:%M%p.txt')
+#     client.put_file(path, text)
+
+#     return JsonResponse({'status': 'Ok'})
+
+
+# def dropbox_edit_note(request):
+#     # TEST TEST TEST
+#     admin = User.objects.get(pk=1)
+#     client = dropbox_get_connection(admin, 'client')
+#     text = 'test from edit note view'
+
+#     path = '/2016/feb/29/deez_09:27AM (1).txt'
+
+#     client.put_file(path, text, overwrite=True)
+
+#     return JsonResponse({'status': 'Ok'})
 
 
 # def format_date(clear_str, res_dict=None):
@@ -199,50 +354,6 @@ def dropbox_get_notes_version_search(request):
 #     return res_dict
 
 
-def dropbox_get_notes_version_alt(request):
-    # TEST TEST TEST
-    admin = User.objects.get(pk=1)
-
-    dbx = dropbox_get_connection(admin)
-
-    days = []
-    REGEXP_FOR_MONTH_FOLDERS = '{}'.format('|'.join(settings.FOLDER_NAME_MONTH))
-
-    dirty_years_folders = dbx.files_list_folder('').entries
-    for clean_years_folder in dirty_years_folders:
-        if isinstance(clean_years_folder, FolderMetadata):
-            if re.match('(?:19|20)\d\d',
-                clean_years_folder.path_lower.split('/')[1]):
-
-                dirty_month_folders = \
-                    dbx.files_list_folder(clean_years_folder.path_lower).entries
-                for clean_month_folder in dirty_month_folders:
-                    if isinstance(clean_month_folder, FolderMetadata):
-                        if re.match(REGEXP_FOR_MONTH_FOLDERS,
-                            clean_month_folder.path_lower.split('/')[2]):
-
-                            dirty_days_folders = \
-                                dbx.files_list_folder(clean_month_folder.path_lower).entries
-                            for clean_days_folder in dirty_days_folders:
-                                if isinstance(clean_days_folder, FolderMetadata):
-                                    if re.match('\d\d',
-                                        clean_days_folder.path_lower.split('/')[3]):
-
-                                        dirty_files = \
-                                            dbx.files_list_folder(clean_days_folder.path_lower).entries
-                                        for clean_file in dirty_files:
-                                            if isinstance(clean_file, FileMetadata):
-                                                if re.match('deez_(.*)\.txt$',
-                                                    clean_file.path_lower.split('/')[4]):
-
-                                                    days.append(clean_file.path_lower)
-
-    res_list = custom_funcs.sorted_by_time(days)
-    res_dict = {}
-    for file in res_list:
-        res_dict = custom_funcs.format_date(file, res_dict)
-
-    return JsonResponse({'res_list': res_list, 'res_dict': res_dict})
 
 
 # FILTER_REGEXP = [

@@ -9,6 +9,11 @@
 
 {% block local_js %}
     <script type="text/javascript" src="{% static "notes/js/functions/tooltipBtn.js" %}"></script>
+    <!-- [A] Controllers -->
+    <script type="text/javascript" src="{% static "notes/js/controllers/TimelinerController.js" %}"></script>
+    <script type="text/javascript" src="{% static "notes/js/controllers/PanelController.js" %}"></script>
+    <!-- [A] Module -->
+    <script type="text/javascript" src="{% static "notes/js/main.js" %}"></script>
 {% endblock local_js %}
 
 {% block content %}
@@ -48,153 +53,105 @@
         border-right: 1px solid rgba(128, 128, 128, .3);
     }
 
-    .panel .panel-heading {
-        background-color: #999;
-        padding: 5px 0px;
-        color: #fff;
-        border: 1px solid #787878;
-    }
-
-    .panel {
-        border-bottom-left-radius: 10px;
-        border-bottom-right-radius: 10px;
-        border: 1px solid #7F7F7F;
-    }
-
-    .panel .panel-heading .panel-date {
-        display: inline-block;
-        line-height: 25px;
-        margin: 0 10px;
-    }
-
-    .select-style {
-        /*padding: 0;
-        margin: 0;
-        border-radius: 5px;
-        display: inline-block;
-        border-radius: 3px;
-        overflow: hidden;
-        background-color: #fff;
-        text-align: center;*/
-        border: 1px solid #00BFFF;
-        display: inline-block;
-        width: 20%;
-    }
-
-    .select-style select {
-        border: none;
-        /*width: 110%;*/
-        width: 100%;
-        color: #fff;
-        box-shadow: none;
-        background-image: none;
-        background-color: #00BFFF;
-        -webkit-appearance: none;
-           -moz-appearance: none;
-                appearance: none;
-    }
-
-    .select-style select[selected='selected'] {
-        color: red;
-    }
-
-    .select-style select:focus {
-        outline: none;
-    }
-
-    .select-style option {
-        background-color: #fff;
-        font-size: 16px;
-        text-align: center;
-    }
-
-    .file-icons {
-        padding: 0 30px;
-    }
 
 </style>
-
-<div class="page-header">
-    <a href="#" class="main"><img width="80" src="{% static 'main/images/deez_notes_logo.png' %}"></a>
-    <p class="pull-right">
-        <a href="#"><img width="50" src="{% static "main/images/search_icon.png" %}" class="search-btn" alt=""></a>
-        <a href="#"><img width="50" src="{% static "main/images/settings_icon.png" %}" alt="" class="settings-btn"></a>
-    </p>
-</div>
-<div class="page-container" ng-app='MainApp'>
-    <a href="#" class="daily_journal" data-toggle="tooltip" data-placement="top" title="Daily Journal"><img width="80" src="{% static 'main/images/daily_journal_icon.png' %}"/></a>
-    <a href="#" class="notebook_icon" data-toggle="tooltip" data-placement="top" title="Notebook"><img width="80" src="{% static 'main/images/notebook_icon.png' %}"/></a>
-    <a href="#" class="tag_icon" data-toggle="tooltip" data-placement="top" title="Tag"><img width="80" src="{% static 'main/images/tag_icon.png' %}"/></a>
-    <div class="container main-container col-xs-8 col-xs-offset-2" ng-controller='TimelinerController as time'>
-        <h1 class="text-center">Hello, {{ request.user.username|title }}!</h1>
-        <br/>
-        <p class="text-center">This is a main Page</p>
-        <div class="timeliner pull-right">
-            <ul class="timeliner">
-                <li>2003 &#8212;</li>
-                <li>2004 &#8212;
-                    <ul class="timeliner-month">
-                        <li>may -
-                            <ul class="timeliner-day">
-                                <li><p class="date">San 25</p></li>
-                                <li><p class="date">Mon 26</p></li>
-                            </ul>
-                        </li>
-                        <li>sep -</li>
-                    </ul>
-                </li>
-                <p class="date">May 25, 2004</p>
-                <p class="date">May 28, 2004</p>
-                <p class="date">May 25, 2004</p>
-                <p class="date">May 28, 2004</p>
-                <li>2007 &#8212;</li>
-                <li>2008 &#8212;</li>
-                <li>2009 &#8212;</li>
-                <li>2012 &#8212;</li>
-            </ul>
+<div ng-app='MainApp' ng-cloak>
+    <div ng-controller="PanelController as panel">
+        <div class="page-header">
+            <a ng-click="panel.selectTab(1);" href="#" class="main"><img width="80" src="{% static 'main/images/deez_notes_logo.png' %}"></a>
+            <p class="pull-right">
+                <a href="#"><img width="50" src="{% static "main/images/search_icon.png" %}" class="search-btn" alt=""></a>
+                <a ng-click="panel.selectTab(6);" href="#"><img width="50" src="{% static "main/images/settings_icon.png" %}" alt="" class="settings-btn"></a>
+            </p>
         </div>
-        <!-- <div class="panel">
-            <div class="panel-heading">
-                <span class="panel-date">Tues, May 25, 2014</span>
-                <div class="select-style">
-                    <select>
-                        <option value="volvo" selected="selected">Notebook</option>
-                        <option value="saab">Saab</option>
-                        <option value="mercedes">Mercedes</option>
-                        <option value="audi">Audi</option>
-                    </select>
-                </div>
-                <div class="select-style">
-                    <select>
-                        <option value="volvo">Tag</option>
-                        <option value="saab">Saab</option>
-                        <option value="mercedes">Mercedes</option>
-                        <option value="audi">Audi</option>
-                    </select>
-                </div>
-                <div class="select-style">
-                    <div style="text-align: center; overflow: hidden; width: 100%; height: 30px; border: 1px solid  #00BFFF; background-color:  #00BFFF;">
-                        <div style="color: #fff;">Insert File</div>
-                        <input type="file" name="file" id="file" size="1" style="margin-top: -50px; margin-left:-410px; -moz-opacity: 0; filter: alpha(opacity=0); opacity: 0; font-size: 150px; height: 100px;">
-                    </div>
-                </div>
-            </div>
-            <div class="panel-body">
-                <div>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Quisquam quas, consectetur, saepe sunt sed corrupti sapiente reprehenderit repudiandae. Cumque similique sit amet maiores, magni, obcaecati rem libero a nemo harum.</div>
-                <div>Libero cupiditate inventore veniam, sed rem error quo aperiam ullam earum, dolore placeat blanditiis. Corporis nobis quo ad earum similique amet facilis, veniam velit. Aspernatur, harum omnis ullam architecto laborum.</div>
-                <div>Ipsum impedit rem repudiandae inventore, quam quis quidem amet. Ipsa id labore doloribus eaque assumenda repudiandae nulla exercitationem deserunt rerum, laudantium dolorum, saepe illum impedit. Ipsa incidunt voluptatem, at ex.</div>
-                <div>Unde ipsam reiciendis nobis excepturi ducimus repellat eligendi blanditiis in asperiores architecto, quo dolore non, fuga, aliquid, provident quos. Doloribus dolores sequi eligendi. Aliquam, quia odio, iusto reiciendis officia illum.</div>
-                <div>Dolor voluptate rem libero necessitatibus, porro ratione mollitia consectetur architecto cumque impedit nulla eveniet quaerat dignissimos ducimus ipsa quisquam iure alias commodi saepe ea error pariatur repudiandae tempore praesentium! Obcaecati!</div>
+        <div class="page-container">
+            <a ng-click="panel.selectTab(2);" href="#" class="daily_journal" data-toggle="tooltip" data-placement="top" title="Daily Journal"><img width="80" src="{% static 'main/images/daily_journal_icon.png' %}"/></a>
+            <a ng-click="panel.selectTab(3);" href="#" class="notebook_icon" data-toggle="tooltip" data-placement="top" title="Notebook"><img width="80" src="{% static 'main/images/notebook_icon.png' %}"/></a>
+            <a ng-click="panel.selectTab(4);" href="#" class="tag_icon" data-toggle="tooltip" data-placement="top" title="Tag"><img width="80" src="{% static 'main/images/tag_icon.png' %}"/></a>
 
-                <div class="row">
-                    <br>
-                    <div class="pull-right file-icons">
-                        <a href="#" target="_blank"><img width="50" src="{% static "main/images/text.png" %}" data-toggle="tooltip" data-placement="top" title="deez_06:49PM.txt" alt="text_file" /></a>
-                        <a href="#"><img width="50" src="{% static "main/images/pdf.png" %}" data-toggle="tooltip" data-placement="top" title="some_name.pdf" alt="pdf_file" /></a>
+            <div ng-if="panel.isSelected(2)" class="timeliner pull-right">
+                <ul class="timeliner">
+                    <li>2003 &#8212;</li>
+                    <li>2004 &#8212;
+                        <ul class="timeliner-month">
+                            <li>may -
+                                <ul class="timeliner-day">
+                                    <li><p class="date">San 25</p></li>
+                                    <li><p class="date">Mon 26</p></li>
+                                </ul>
+                            </li>
+                            <li>sep -</li>
+                        </ul>
+                    </li>
+                    <p class="date">May 25, 2004</p>
+                    <p class="date">May 28, 2004</p>
+                    <p class="date">May 25, 2004</p>
+                    <p class="date">May 28, 2004</p>
+                    <li>2007 &#8212;</li>
+                    <li>2008 &#8212;</li>
+                    <li>2009 &#8212;</li>
+                    <li>2012 &#8212;</li>
+                </ul>
+            </div>
+            <div class="container main-container col-xs-8 col-xs-offset-2">
+                <h1 class="text-center">Hello, {{ request.user.username|title }}!</h1>
+                <br/>
+                [[panel.tab]]
+                <p class="text-center">This is a main Page</p>
+                <div ng-if="panel.isSelected(3) || panel.isSelected(4)">
+                    <div class="select-style select-tag">
+                       <select>
+                           <option value="volvo" selected="selected">Notebook</option>
+                           <option value="saab">Saab</option>
+                           <option value="mercedes">Mercedes</option>
+                           <option value="audi">Audi</option>
+                       </select>
+                   </div>
+               </div>
+               <br>
+                <div class="note-block">
+                    <div class="note-block-heading">
+                       <div class="row">
+                           <span class="col-md-3 note-block-date">Tues, May 25, 2014</span>
+                           <div class="col-md-3">
+                               <div class="select-style">
+                                   <select>
+                                       <option value="volvo" selected="selected">Notebook</option>
+                                       <option value="saab">Saab</option>
+                                       <option value="mercedes">Mercedes</option>
+                                       <option value="audi">Audi</option>
+                                   </select>
+                               </div>
+                           </div>
+                           <div class="col-md-3">
+                               <div class="select-style">
+                                   <select>
+                                       <option value="volvo">Tag</option>
+                                       <option value="saab">Saab</option>
+                                       <option value="mercedes">Mercedes</option>
+                                       <option value="audi">Audi</option>
+                                   </select>
+                               </div>
+                           </div>
+                           <div class="col-md-3">
+                               <button class="btn btn-block insert_btn"><input type="file" id="exampleInputFile" class="hide"/>Insert File</button>
+                           </div>
+                       </div>
+                    </div>
+                    <div class="note-block-body">
+                       <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Sunt, ipsam.</p>
+                       <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Sunt, ipsam.</p>
+                       <div class="row">
+                            <br>
+                            <div class="pull-right file-icons">
+                                <a href="#" target="_blank"><img width="50" src="{% static "main/images/text.png" %}" data-toggle="tooltip" data-placement="top" title="deez_06:49PM.txt" alt="text_file" /></a>
+                                <a href="#"><img width="50" src="{% static "main/images/pdf.png" %}" data-toggle="tooltip" data-placement="top" title="some_name.pdf" alt="pdf_file" /></a>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div> -->
+        </div>
     </div>
 </div>
 {% endblock content %}

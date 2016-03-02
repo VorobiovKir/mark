@@ -6,4 +6,5 @@ angular
             $httpProvider.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
             $interpolateProvider.startSymbol('[[').endSymbol(']]');
         })
-    .controller('TimelinerController', TimelinerController);
+    .controller('TimelinerController', TimelinerController)
+    .controller('PanelController', PanelController);

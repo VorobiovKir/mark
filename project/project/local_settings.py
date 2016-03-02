@@ -9,6 +9,13 @@ DROPBOX_APP_KEY = 'mrcw8jglsdkv0ic'
 DROPBOX_APP_SECRET = '1czbe7rq0i0eagc'
 DROPBOX_APP_TYPE = 'app_folder'
 
+DROPBOX_META_PATH = '/.meta/'
+DROPBOX_PROJECTS_FILE = 'projects.txt'
+DROPBOX_TAGS_FILE = 'tags.txt'
+
+DROPBOX_DEFAULT_PROJECT = 'project'
+DROPBOX_DEFAULT_TAG = 'tag'
+
 SITE_PATH = 'https://light-it-07.tk/'
 
 
