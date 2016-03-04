@@ -89,6 +89,38 @@
 								</div>
 							</div>
 						</div>
+						<div ng-if="panel.isSelected(2)">
+							<div class="note-block" ng-repeat="note in main.timeliner.current_list">
+								<div class="note-block-heading">
+								   	<div class="row">
+									   	<span class="col-md-3 note-block-date">[[ note.date ]]</span>
+									   	<div class="col-md-3">
+										   	<div class="select-style">
+											   	<select ng-model='note.project' ng-options="option for option in main.user.projects track by option"></select>
+										   	</div>
+									   	</div>
+									   	<div class="col-md-3">
+										   	<div class="select-style">
+											   	<select ng-model='note.tag' ng-options="option for option in main.user.tags track by option"></select>
+										   	</div>
+									   	</div>
+									   	<div class="col-md-3">
+										   	<button class="btn btn-block insert_btn"><input type="file" id="exampleInputFile" class="hide"/>Insert File</button>
+									   	</div>
+								   	</div>
+								</div>
+								<div class="note-block-body">
+								   <p>[[ note.text ]]</p>
+								   <div class="row">
+										<br>
+										<div class="pull-right file-icons">
+											<a href="#" target="_blank"><img width="50" src="{% static "main/images/text.png" %}" data-toggle="tooltip" data-placement="top" title="deez_06:49PM.txt" alt="text_file" /></a>
+											<a href="#"><img width="50" src="{% static "main/images/pdf.png" %}" data-toggle="tooltip" data-placement="top" title="some_name.pdf" alt="pdf_file" /></a>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
 						<div ng-if="panel.isSelected(5)">
 							<br>
 							<div ng-show="main.messages.success.settings" class="text-center bg-success" role="alert" ng-bind="main.messages.success.settings"></div>
@@ -134,7 +166,7 @@
 										<li ng-repeat="(month, month_value) in year_value">
 											<span class="date-month" onclick="toggleTimeliner(event);">[[ month ]]</span> &#8212;
 											<ul class="timeliner-day">
-												<li ng-repeat="(day, day_value) in month_value"><p class="date">[[ day ]]</p></li>
+												<li ng-repeat="(day, day_value) in month_value"><p class="date" ng-click="main.changeDate(day_value)">[[ day ]]</p></li>
 											</ul>
 										</li>
 									</ul>

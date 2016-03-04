@@ -27,7 +27,7 @@ var MainController = function($http) {
                 full_info: '',
                 form_date: ''
             },
-            unorder: '',
+            clear: '',
         },
         choices: {
             projects: '',
@@ -48,6 +48,31 @@ var MainController = function($http) {
     this.filters = {
         projects: 'notebook',
         tags: 'tag'
+    }
+
+    this.timeliner = {
+        date: '',
+        current_list: [],
+    }
+
+    this.changeDate = function(user_date) {
+        all_notes = that.user.notes.order.full_info;
+        var find_index = null;
+        for (var i = 0; i < all_notes.length; i++) {
+            if (user_date == all_notes[i].path) {
+                find_index = i;
+                break;
+            }
+        }
+        if (find_index != null) {
+            that.timeliner.current_list = all_notes.slice(i);
+        }
+        // for (var i = 0; i < that.user.notes.order.full_info; i++) {
+        //     console.log(that.user.notes.order.full_info[i]);
+        //     if (that.user.notes.order.full_info[i].path == user_date) {
+        //         alert('yes');
+        //     }
+        // }
     }
 
     this.filtered = function(page, search) {
@@ -94,9 +119,10 @@ var MainController = function($http) {
         var path = (mode == 'fast') ? 'dropbox.getNotesFast' : 'dropbox.getNotesSlow';
         $http.get(this.url.getFullPath(path)).success(function(data) {
             that.user.notes.order.full_info = data['result'];
-            that.preloading(3);
             that.user.notes.order.form_date = data['format_result'];
-            console.log(that.user.notes.order);
+            that.user.notes.clear = data['order'];
+            that.preloading(3);
+            console.log(that.user.notes);
         });
     }
 

@@ -97,9 +97,14 @@ def dropbox_get_notes_version_search(request):
     for file in result:
         res = custom_funcs.format_date(file, res)
 
-    order_res = custom_funcs.format_get_dict_full_info(result, client)
+    order_res = custom_funcs.format_get_list_full_info(result, client)
+    # order_res = custom_funcs.format_get_dict_full_info(result, client)
 
-    return JsonResponse({'format_result': res, 'result': order_res})
+    return JsonResponse({
+        'format_result': res,
+        'result': order_res,
+        'order': result
+    })
 
 
 def dropbox_get_notes_version_alt(request):
@@ -113,7 +118,11 @@ def dropbox_get_notes_version_alt(request):
     for file in res_list:
         res_dict = custom_funcs.format_date(file, res_dict)
 
-    return JsonResponse({'format_result': res_dict, 'result': res_list})
+    return JsonResponse({
+        'format_result': res_dict,
+        'result': res_list,
+        'order': days
+    })
 
 
 def get_notes_by_exceptions(dbx):
@@ -199,7 +208,6 @@ def dropbox_create_or_edit_note(request):
         tag = request.GET.get('tag', settings.DROPBOX_DEFAULT_TAG)
         note_path = \
             timezone.now().strftime('/%Y/%b/%d/deez_{}_{}_%I:%M%p.txt').format(project, tag)
-
 
     if new_text:
         client.put_file(note_path, new_text, overwrite=overwrite)

@@ -41,23 +41,27 @@ def format_date(clear_str, res_dict=None):
     file_info = clear_str.split('/')
 
     try:
-        res_dict[file_info[1]][file_info[2]][file_info[3]].append(file_info[4])
+        # res_dict[file_info[1]][file_info[2]][file_info[3]].append(file_info[4])
+        res_dict[file_info[1]][file_info[2]][file_info[3]].append(clear_str)
     except:
         if file_info[1] in res_dict:
             if file_info[2] in res_dict[file_info[1]]:
                 res_dict[file_info[1]][file_info[2]].update({
-                    file_info[3]: [file_info[4]]
+                    # file_info[3]: [file_info[4]]
+                    file_info[3]: clear_str
                 })
             else:
                 res_dict[file_info[1]].update({
                     file_info[2]: {
-                        file_info[3]: [file_info[4]]
+                        # file_info[3]: [file_info[4]]
+                        file_info[3]: clear_str
                     }})
         else:
             res_dict.update({
                 file_info[1]: {
                     file_info[2]: {
-                        file_info[3]: [file_info[4]]
+                        # file_info[3]: [file_info[4]]
+                        file_info[3]: clear_str
                     }
                 }
             })
@@ -95,6 +99,22 @@ def format_get_dict_full_info(clear_file_list, client):
             'text': dropbox_get_note(client, file_name)
         }
         dict_key += 1
+    return res_dict
+
+
+def format_get_list_full_info(clear_file_list, client):
+    res_dict = []
+    for file_name in clear_file_list:
+        date, name = file_name.split('/deez_')
+        info = name.split('_')
+        res_dict.append({
+            'path': file_name,
+            'project': info[0],
+            'tag': info[1],
+            'time': info[2],
+            'date': date,
+            'text': dropbox_get_note(client, file_name)
+        })
     return res_dict
 
 
