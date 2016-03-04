@@ -42,40 +42,16 @@
 					<a ng-click="panel.selectTab(3);" href="#" class="notebook_icon" data-toggle="tooltip" data-placement="top" title="Notebook"><img width="80" src="{% static 'main/images/notebook_icon.png' %}"/></a>
 					<a ng-click="panel.selectTab(4);" href="#" class="tag_icon" data-toggle="tooltip" data-placement="top" title="Tag"><img width="80" src="{% static 'main/images/tag_icon.png' %}"/></a>
 
-					<div ng-show="panel.isSelected(2)" class="timeliner_block pull-right">
-						<ul class="timeliner" id="timeliner">
-							<li><span>2003</span> &#8212;</li>
-							<li><span>2004</span> &#8212;
-								<ul class="timeliner-month">
-									<li><span class="date-month" onclick="toggeTimeliner(event);">May</span> &#8212;
-										<ul class="timeliner-day">
-											<li><p class="date">Mon 23</p></li>
-											<li><p class="date">Tue 28</p></li>
-										</ul>
-									</li>
-									<li><span class="date-month" onclick="toggeTimeliner(event);">Sep</span> &#8212;
-										<ul class="timeliner-day">
-											<li><p class="date">Sun 21</p></li>
-											<li><p class="date">Sat 22</p></li>
-											<li><p class="date">Fri 27</p></li>
-											<li><p class="date">Sat 28</p></li>
-										</ul>
-									</li>
-								</ul>
-							</li>
-							<li><span>2007</span> &#8212;</li>
-						</ul>
-					</div>
 					<div class="container main-container col-xs-8 col-xs-offset-2">
 						<h1 class="text-center">Hello, {{ request.user.username|title }}!</h1>
 						<br/>
-						<div ng-show="panel.isSelected(3)">
+						<div ng-if="panel.isSelected(3)">
 							<div class="select-style select-tag">
 								<select ng-model='main.filters.projects' ng-options="option for option in main.user.projects track by option"></select>
 							</div>
 							<br>
 					   </div>
-					   <div ng-show="panel.isSelected(4)">
+					   <div ng-if="panel.isSelected(4)">
 							<div class="select-style select-tag">
 								<select ng-model='main.filters.tags' ng-options="option for option in main.user.tags track by option"></select>
 							</div>
@@ -114,20 +90,65 @@
 							</div>
 						</div>
 						<div ng-if="panel.isSelected(6)">
-							<h2 class="text-center">Settings</h2>
-							<form>
-								<div class="row">
-									<div class="col-lg-6">
+							<br>
+							<div ng-show="main.messages.success.settings" class="text-center bg-success" role="alert" ng-bind="main.messages.success.settings"></div>
+							<div class="row">
+								<div class="col-xs-6 col-xs-offset-3">
+									<hr>
+									<div class="form-group">
+										<label for="projectInput">Add new project</label>
+										<p class="text-danger" ng-bind="main.user.choices.errors.projects"></p>
 										<div class="input-group">
-											<input type="text" class="form-control" placeholder="Search for...">
+											<input type="text" id="projectInput" ng-model="main.user.choices.projects" class="form-control" placeholder="Project">
 											<span class="input-group-btn">
-												<button class="btn btn-default" type="button">Go!</button>
+												<button class="btn btn-default" type="button" ng-click="main.addDelMeta('projects', 'add')">Add</button>
 											</span>
-										</div><!-- /input-group -->
-									</div><!-- /.col-lg-6 -->
+										</div>
+									</div>
 								</div>
-							</form>
+								<br>
+							</div>
+							<div class="row">
+								<div class="col-xs-6 col-xs-offset-3">
+									<hr>
+									<div class="form-group">
+										<label for="tagInput">Add new tag</label>
+										<p class="text-danger" ng-bind="main.user.choices.errors.tags"></p>
+										<div class="input-group">
+											<input type="text" id="tagInput" ng-model="main.user.choices.tags" class="form-control" placeholder="Tag">
+											<span class="input-group-btn">
+												<button class="btn btn-default" ng-click="main.addDelMeta('tags', 'add')" type="button">Add</button>
+											</span>
+										</div>
+									</div>
+								</div>
+								<br>
+							</div>
 						</div>
+					</div>
+					<div ng-if="panel.isSelected(2)" class="timeliner_block pull-right col-xs-2">
+						<ul class="timeliner" id="timeliner">
+							<li><span>2003</span> &#8212;</li>
+							<li><span>2004</span> &#8212;
+								<ul class="timeliner-month">
+									<li><span class="date-month" onclick="toggeTimeliner(event);">May</span> &#8212;
+										<ul class="timeliner-day">
+											<li><p class="date">Mon 23</p></li>
+											<li><p class="date">Tue 28</p></li>
+										</ul>
+									</li>
+									<li><span class="date-month" onclick="toggeTimeliner(event);">Sep</span> &#8212;
+										<ul class="timeliner-day">
+											<li><p class="date">Sun 21</p></li>
+											<li><p class="date">Sat 22</p></li>
+											<li><p class="date">Fri 27</p></li>
+											<li><p class="date">Sat 28</p></li>
+										</ul>
+									</li>
+								</ul>
+							</li>
+							<li><span>2007</span> &#8212;</li>
+						</ul>
 					</div>
 				</div>
 			</div>

@@ -113,6 +113,9 @@
 .timeliner li span{
     color:#2C3E50;
 }
+.timeliner-month{
+    margin-left: -55px;
+}
 .timeliner-month li{
     margin-bottom: 10px;
     margin-top: 7px;
@@ -199,4 +202,11 @@ ul li {
 
 #load-screen{
     display: none;
+}
+
+.bg-success{
+    height: 31px;
+    border-radius: 5px;
+    line-height: 30px;
+    border: 1px solid #008000;
 }

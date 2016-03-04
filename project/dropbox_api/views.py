@@ -4,7 +4,7 @@ from django.shortcuts import redirect
 from django.conf import settings
 from django.core.urlresolvers import reverse
 from django.http import (HttpResponseRedirect, HttpResponse,
-                         HttpResponseForbidden)
+                         HttpResponseForbidden, HttpResponseServerError)
 from django.contrib.auth.models import User
 from django.http import JsonResponse
 from django.utils import timezone
@@ -199,9 +199,6 @@ def dropbox_create_or_edit_note(request):
         return JsonResponse({'res': 'success'})
 
 
-
-
-
 def dropbox_change_meta_note(request):
     # TEST TEST TEST
     admin = User.objects.get(pk=1)
@@ -280,7 +277,7 @@ def dropbox_add_or_del_meta_files(request):
     admin = User.objects.get(pk=1)
     client = dropbox_get_connection(admin, 'client')
 
-    search_type = request.GET.get('search_type', 'tags')
+    search_type = request.GET.get('search_type', '')
     query_name = request.GET.get('query_name', '')
     action = request.GET.get('action', '')
 
@@ -294,12 +291,20 @@ def dropbox_add_or_del_meta_files(request):
         if action == 'add':
             if query_name not in res:
                 res.append(query_name)
+            else:
+                return HttpResponseServerError(
+                    'Dublicate {} name'.format(search_type[:-1]))
         elif action == 'delete':
             if query_name in res:
                 res.remove(query_name)
+            else:
+                return HttpResponseServerError(
+                    'Not find {}'.format(search_type[:-1]))
         client.put_file(settings.DROPBOX_META_PATH + file_name, '\n'.join(res),
                         overwrite=True)
-        return JsonResponse({'res': 'success'})
+        return JsonResponse({'res': 'Successfully added'})
+    else:
+        return HttpResponseServerError('Bad request')
 # -----------------------------------------------------------
 
 
