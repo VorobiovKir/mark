@@ -88,8 +88,9 @@ def dropbox_get_notes_version_search(request):
     admin = User.objects.get(pk=1)
 
     dbx = dropbox_get_connection(admin)
+    client = dropbox_get_connection(admin, 'client')
 
-    matches = dbx.files_search('', 'deez').matches
+    matches = dbx.files_search('', 'deez_').matches
     result = []
     regex = settings.REGEX_FILES
 
@@ -98,11 +99,15 @@ def dropbox_get_notes_version_search(request):
             if re.match(regex, search_match.metadata.path_lower):
                 result.append(search_match.metadata.path_lower)
 
+    result = custom_funcs.sorted_by_time(result)
+
     res = {}
     for file in result:
         res = custom_funcs.format_date(file, res)
 
-    return JsonResponse({'order res': res, 'unorder res': result})
+    order_res = custom_funcs.format_get_dict_full_info(result, client)
+
+    return JsonResponse({'format_result': res, 'result': order_res})
 
 
 def dropbox_get_notes_version_alt(request):
@@ -148,7 +153,8 @@ def dropbox_get_notes_version_alt(request):
     for file in res_list:
         res_dict = custom_funcs.format_date(file, res_dict)
 
-    return JsonResponse({'res_list': res_list, 'res_dict': res_dict})
+    return JsonResponse({'format_result': res_dict, 'result': res_list})
+    # return JsonResponse({'res_list': res_list, 'res_dict': res_dict})
 
 
 # def dropbox_get_notes(request):
@@ -183,7 +189,7 @@ def dropbox_create_or_edit_note(request):
 
     if action == 'create':
         project = request.GET.get('project', settings.DROPBOX_DEFAULT_PROJECT)
-        tag = request.GET.get('project', settings.DROPBOX_DEFAULT_TAG)
+        tag = request.GET.get('tag', settings.DROPBOX_DEFAULT_TAG)
         note_path = \
             timezone.now().strftime('/%Y/%b/%d/deez_{}_{}_%I:%M%p.txt').format(project, tag)
 
@@ -193,17 +199,7 @@ def dropbox_create_or_edit_note(request):
         return JsonResponse({'res': 'success'})
 
 
-def dropbox_get_note(request):
-    # TEST TEST TEST
-    admin = User.objects.get(pk=1)
 
-    client = dropbox_get_connection(admin, 'client')
-    path = request.GET.get('path')
-
-    with client.get_file(path) as f:
-        result = f.read()
-
-    return JsonResponse({'content': result})
 
 
 def dropbox_change_meta_note(request):
@@ -247,14 +243,23 @@ def dropbox_search(request):
 
 # --------------------- META DATA VIEWS ---------------------
 def dropbox_get_meta_files(request):
-    # TEST TEST TEST
-    admin = User.objects.get(pk=1)
-    client = dropbox_get_connection(admin, 'client')
+    # # # TEST TEST TEST
+    # admin = User.objects.get(pk=1)
+    # client = dropbox_get_connection(admin, 'client')
 
-    search_type = request.GET.get('search_type', 'tags')
-    res = dropbox_get_meta_data(search_type, client)
+    client = dropbox_get_connection(request.user, 'client')
+    search_type = request.GET.get('search_type')
+    if search_type:
+        res = dropbox_get_meta_data(search_type, client)
+        if search_type == 'projects':
+            default_name = settings.DROPBOX_DEFAULT_PROJECT
+        else:
+            default_name = settings.DROPBOX_DEFAULT_TAG
+        res = [default_name] + res
 
-    return JsonResponse({'res': res})
+        return JsonResponse({'result': res})
+    else:
+        return JsonResponse({'errors': 'not valible query'})
 
 
 def dropbox_get_meta_data(type_meta_data, api):

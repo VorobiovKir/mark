@@ -19,7 +19,7 @@ urlpatterns = [
     url(r'^change_meta_note/$', views.dropbox_change_meta_note,
         name='change_meta_note'),
 
-    url(r'^get_note/$', views.dropbox_get_note, name='get_note'),
+    # url(r'^get_note/$', views.dropbox_get_note, name='get_note'),
 
     url(r'^search/$', views.dropbox_search, name='search'),
     # url(r'^edit_note/$', views.dropbox_edit_note, name='edit'),

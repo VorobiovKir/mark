@@ -13,7 +13,7 @@ DROPBOX_META_PATH = '/.meta/'
 DROPBOX_PROJECTS_FILE = 'projects.txt'
 DROPBOX_TAGS_FILE = 'tags.txt'
 
-DROPBOX_DEFAULT_PROJECT = 'project'
+DROPBOX_DEFAULT_PROJECT = 'notebook'
 DROPBOX_DEFAULT_TAG = 'tag'
 
 SITE_PATH = 'https://light-it-07.tk/'

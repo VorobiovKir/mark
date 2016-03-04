@@ -3,6 +3,21 @@ from collections import OrderedDict
 from django.conf import settings
 
 
+def dropbox_get_note(client, path):
+    # # TEST TEST TEST
+    # admin = User.objects.get(pk=1)
+
+    # client = dropbox_get_connection(admin, 'client')
+    # path = request.GET.get('path')
+    # return JsonResponse({'content': result})
+
+    with client.get_file(path) as f:
+        result = f.read()
+
+    return result
+
+
+
 def format_date(clear_str, res_dict=None):
     """format date
 
@@ -63,6 +78,26 @@ def sorted_by_time(clear_file_list):
                                  settings.FOLDER_NAME_MONTH.index(
                                     x.split('/')[2]),
                                  x.split('/')[3]))
+
+
+def format_get_dict_full_info(clear_file_list, client):
+    dict_key = 1
+    res_dict = {}
+    for file_name in clear_file_list:
+        date, name = file_name.split('/deez_')
+        info = name.split('_')
+        res_dict[dict_key] = {
+            'path': file_name,
+            'project': info[0],
+            'tag': info[1],
+            'time': info[2],
+            'date': date,
+            'text': dropbox_get_note(client, file_name)
+        }
+        dict_key += 1
+    return res_dict
+
+
 
 # !!!!!!!!!   collections.OrderedDict
 
