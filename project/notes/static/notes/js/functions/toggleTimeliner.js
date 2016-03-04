@@ -4,6 +4,6 @@
 //     });
 // });
 
-function toggeTimeliner(event) {
+function toggleTimeliner(event) {
     $(event.target).closest('li').children('ul').toggle('clip', {}, 200);
 }

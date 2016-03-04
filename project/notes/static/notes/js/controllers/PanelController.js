@@ -1,6 +1,6 @@
 var PanelController = function($cookies) {
 
-    this.tab = parseInt($cookies.get('panelTab')) || 2;
+    this.tab = parseInt($cookies.get('panelTab')) || 1;
 
     this.selectTab = function(numTab) {
         this.tab = numTab;

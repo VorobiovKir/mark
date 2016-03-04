@@ -90,15 +90,7 @@ def dropbox_get_notes_version_search(request):
     dbx = dropbox_get_connection(admin)
     client = dropbox_get_connection(admin, 'client')
 
-    matches = dbx.files_search('', 'deez_').matches
-    result = []
-    regex = settings.REGEX_FILES
-
-    for search_match in matches:
-        if isinstance(search_match.metadata, FileMetadata):
-            if re.match(regex, search_match.metadata.path_lower):
-                result.append(search_match.metadata.path_lower)
-
+    result = get_notes_by_search(dbx)
     result = custom_funcs.sorted_by_time(result)
 
     res = {}
@@ -113,10 +105,19 @@ def dropbox_get_notes_version_search(request):
 def dropbox_get_notes_version_alt(request):
     # TEST TEST TEST
     admin = User.objects.get(pk=1)
-
     dbx = dropbox_get_connection(admin)
 
-    days = []
+    days = get_notes_by_exceptions(dbx)
+    res_list = custom_funcs.sorted_by_time(days)
+    res_dict = {}
+    for file in res_list:
+        res_dict = custom_funcs.format_date(file, res_dict)
+
+    return JsonResponse({'format_result': res_dict, 'result': res_list})
+
+
+def get_notes_by_exceptions(dbx):
+    result = []
     REGEXP_FOR_MONTH_FOLDERS = '{}'.format('|'.join(settings.FOLDER_NAME_MONTH))
 
     dirty_years_folders = dbx.files_list_folder('').entries
@@ -146,15 +147,21 @@ def dropbox_get_notes_version_alt(request):
                                                 if re.match('deez_(.*)\.txt$',
                                                     clean_file.name):
 
-                                                    days.append(clean_file.path_lower)
+                                                    result.append(clean_file.path_lower)
+    return result
 
-    res_list = custom_funcs.sorted_by_time(days)
-    res_dict = {}
-    for file in res_list:
-        res_dict = custom_funcs.format_date(file, res_dict)
 
-    return JsonResponse({'format_result': res_dict, 'result': res_list})
-    # return JsonResponse({'res_list': res_list, 'res_dict': res_dict})
+def get_notes_by_search(dbx):
+    matches = dbx.files_search('', 'deez_').matches
+    result = []
+    regex = settings.REGEX_FILES
+
+    for search_match in matches:
+        if isinstance(search_match.metadata, FileMetadata):
+            if re.match(regex, search_match.metadata.path_lower):
+                result.append(search_match.metadata.path_lower)
+
+    return result
 
 
 # def dropbox_get_notes(request):

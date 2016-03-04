@@ -23,9 +23,11 @@ var MainController = function($http) {
         projects: '',
         tags: '',
         notes: {
-            order: '',
+            order: {
+                full_info: '',
+                form_date: ''
+            },
             unorder: '',
-            full_info_ord: ''
         },
         choices: {
             projects: '',
@@ -46,6 +48,16 @@ var MainController = function($http) {
     this.filters = {
         projects: 'notebook',
         tags: 'tag'
+    }
+
+    this.filtered = function(page, search) {
+        if (page == 3) {
+            return that.filters.projects == search.project;
+        } else if (page == 4) {
+            return that.filters.tags == search.tag;
+        } else if (page == 1) {
+            return true;
+        }
     }
 
     this.preloading = function(count) {
@@ -81,10 +93,10 @@ var MainController = function($http) {
     this.getNotes = function(mode) {
         var path = (mode == 'fast') ? 'dropbox.getNotesFast' : 'dropbox.getNotesSlow';
         $http.get(this.url.getFullPath(path)).success(function(data) {
-            that.user.notes.full_info_ord = data['result'];
+            that.user.notes.order.full_info = data['result'];
             that.preloading(3);
-            // that.user.notes.order = data['format_result'];
-            // console.log(that.user.notes.order);
+            that.user.notes.order.form_date = data['format_result'];
+            console.log(that.user.notes.order);
         });
     }
 

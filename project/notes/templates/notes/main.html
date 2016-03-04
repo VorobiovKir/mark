@@ -34,7 +34,7 @@
 					<a ng-click="panel.selectTab(1);" href="#" class="main"><img width="80" src="{% static 'main/images/deez_notes_logo.png' %}"></a>
 					<p class="pull-right">
 						<a href="#"><img width="50" src="{% static "main/images/search_icon.png" %}" class="search-btn" alt=""></a>
-						<a ng-click="panel.selectTab(6);" href="#"><img width="50" src="{% static "main/images/settings_icon.png" %}" alt="" class="settings-btn"></a>
+						<a ng-click="panel.selectTab(5);" href="#"><img width="50" src="{% static "main/images/settings_icon.png" %}" alt="" class="settings-btn"></a>
 					</p>
 				</div>
 				<div class="page-container" >
@@ -57,8 +57,8 @@
 							</div>
 							<br>
 					   </div>
-					   	<div ng-if="!panel.isSelected(2) && !panel.isSelected(6)">
-							<div class="note-block" ng-repeat="note in main.user.notes.full_info_ord">
+					   	<div ng-if="!panel.isSelected(2) && !panel.isSelected(5)">
+							<div ng-show="main.filtered(panel.tab, note)" class="note-block" ng-repeat="note in main.user.notes.order.full_info">
 								<div class="note-block-heading">
 								   	<div class="row">
 									   	<span class="col-md-3 note-block-date">[[ note.date ]]</span>
@@ -89,7 +89,7 @@
 								</div>
 							</div>
 						</div>
-						<div ng-if="panel.isSelected(6)">
+						<div ng-if="panel.isSelected(5)">
 							<br>
 							<div ng-show="main.messages.success.settings" class="text-center bg-success" role="alert" ng-bind="main.messages.success.settings"></div>
 							<div class="row">
@@ -128,26 +128,18 @@
 					</div>
 					<div ng-if="panel.isSelected(2)" class="timeliner_block pull-right col-xs-2">
 						<ul class="timeliner" id="timeliner">
-							<li><span>2003</span> &#8212;</li>
-							<li><span>2004</span> &#8212;
-								<ul class="timeliner-month">
-									<li><span class="date-month" onclick="toggeTimeliner(event);">May</span> &#8212;
-										<ul class="timeliner-day">
-											<li><p class="date">Mon 23</p></li>
-											<li><p class="date">Tue 28</p></li>
-										</ul>
-									</li>
-									<li><span class="date-month" onclick="toggeTimeliner(event);">Sep</span> &#8212;
-										<ul class="timeliner-day">
-											<li><p class="date">Sun 21</p></li>
-											<li><p class="date">Sat 22</p></li>
-											<li><p class="date">Fri 27</p></li>
-											<li><p class="date">Sat 28</p></li>
-										</ul>
-									</li>
-								</ul>
+							<li ng-repeat="(year, year_value) in main.user.notes.order.form_date">
+								<span>[[ year ]] &#8212;
+									<ul class="timeliner-month">
+										<li ng-repeat="(month, month_value) in year_value">
+											<span class="date-month" onclick="toggleTimeliner(event);">[[ month ]]</span> &#8212;
+											<ul class="timeliner-day">
+												<li ng-repeat="(day, day_value) in month_value"><p class="date">[[ day ]]</p></li>
+											</ul>
+										</li>
+									</ul>
+								</span>
 							</li>
-							<li><span>2007</span> &#8212;</li>
 						</ul>
 					</div>
 				</div>
