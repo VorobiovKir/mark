@@ -211,10 +211,26 @@ ul li {
     border: 1px solid #008000;
 }
 
+.create-note-block {
+    border: 2px solid #00BFFF;
+    padding: 15px;
+    border-radius: 5px;
+    margin: 20px 0;
+    display: none;
+}
+
 .create-note-block .select-group{
     margin: 20px 0;
 }
 
 .create-note-block .select-group .select-style {
         height: 29px;
+}
+
+.create-note-block .create-note-btn-submit {
+    margin-top: 20px;
+}
+
+.create-note-btn {
+    margin-bottom: 20px;
 }

@@ -11,7 +11,10 @@ var MainController = function($http) {
             getMetaFiles: 'dropbox/get_meta_files/',
             getNotesFast: 'dropbox/get_notes_final/',
             getNotesSlow: 'dropbox/get_notes_alt/',
-            addDelNotes: 'dropbox/add_or_del_meta_files/'
+            addDelNotes: 'dropbox/add_or_del_meta_files/',
+            createEditNote: 'dropbox/create_or_edit_note/',
+            format_to_date: 'dropbox/format_to_date/',
+            change_meta_note: 'dropbox/change_meta_note/'
         },
 
         getFullPath: function(path) {
@@ -36,6 +39,11 @@ var MainController = function($http) {
                 projects: '',
                 tags: ''
             }
+        },
+        create: {
+            text: '',
+            tag: 'tag',
+            project: 'notebook'
         }
     }
 
@@ -55,6 +63,56 @@ var MainController = function($http) {
         current_list: [],
     }
 
+    this.createNote = function() {
+        var req = {
+            method: 'POST',
+            url: this.url.getFullPath('dropbox.createEditNote'),
+            data: {
+                'text': that.user.create.text,
+                'project': that.user.create.project,
+                'tag': that.user.create.tag,
+                'action': 'create'
+            }
+        };
+
+        $http(req).success(function(data) {
+            that.user.create.text = '';
+            that.user.create.tag = 'tag';
+            that.user.create.project = 'notebook';
+            that.user.notes.order.full_info.push(data['obj']);
+            that.user.notes.clear.push(data['obj'].path);
+
+            var loc_req = {
+                method: 'POST',
+                url: that.url.getFullPath('dropbox.format_to_date'),
+                data: {
+                    new_note: data['obj'],
+                    notes: that.user.notes.order.form_date
+                }
+            };
+            $http(loc_req).success(function(data) {
+                that.user.notes.order.form_date = data['notes'];
+            });
+        });
+    }
+
+    this.changeMeta = function(path, type, meta_name) {
+        var req = {
+            method: 'GET',
+            url: that.url.getFullPath('dropbox.change_meta_note'),
+            params: {
+                path: path,
+                type: type,
+                meta_name: meta_name
+            }
+        }
+        $http(req).success(function(data) {
+            // create function who change all angular array notes
+        });
+
+        // alert(path + ' ' + type + ' ' + value);
+    }
+
     this.changeDate = function(user_date) {
         all_notes = that.user.notes.order.full_info;
         var find_index = null;
@@ -64,15 +122,15 @@ var MainController = function($http) {
                 break;
             }
         }
+
         if (find_index != null) {
             that.timeliner.current_list = all_notes.slice(i);
         }
-        // for (var i = 0; i < that.user.notes.order.full_info; i++) {
-        //     console.log(that.user.notes.order.full_info[i]);
-        //     if (that.user.notes.order.full_info[i].path == user_date) {
-        //         alert('yes');
-        //     }
-        // }
+    }
+
+    this.toogleCreateNote = function() {
+        $(this).toggleClass('create-note-btn-not-active btn-success');
+        $('.create-note-block').toggle();
     }
 
     this.filtered = function(page, search) {
@@ -122,7 +180,6 @@ var MainController = function($http) {
             that.user.notes.order.form_date = data['format_result'];
             that.user.notes.clear = data['order'];
             that.preloading(3);
-            console.log(that.user.notes);
         });
     }
 
@@ -180,7 +237,7 @@ var MainController = function($http) {
     this.startPage = function() {
         that.getMetaFiles('tags');
         that.getMetaFiles('projects');
-        that.getNotes('fast');
+        that.getNotes('slow');
     }
 
     that.startPage();

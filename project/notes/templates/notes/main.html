@@ -58,25 +58,28 @@
 							<br>
 					   </div>
 					   	<div ng-if="!panel.isSelected(2) && !panel.isSelected(5)">
-					   		<div class="row">
-								<button class="btn btn-success pull-right">Create new note</button>
-								<br>
-							</div>
-							<div class="create-note-block">
-								<div class="row select-group">
-									<div class="col-md-3">
-									   	<div class="select-style">
-										   	<select ng-model='note.project' ng-options="option for option in main.user.projects track by option"></select>
+					   		<div ng-if="panel.isSelected(1)">
+						   		<div class="row">
+									<button class="btn btn-info pull-right create-note-btn" ng-click="main.toogleCreateNote()">Create new note</button>
+									<br>
+								</div>
+								<div class="create-note-block">
+									<div class="row select-group">
+										<div class="col-md-3">
+										   	<div class="select-style">
+											   	<select ng-model='main.user.create.project' ng-options="option for option in main.user.projects track by option"></select>
+										   	</div>
+									   	</div>
+									   	<div class="col-md-3">
+										   	<div class="select-style">
+											   	<select ng-model='main.user.create.tag' ng-options="option for option in main.user.tags track by option"></select>
+										   	</div>
 									   	</div>
 								   	</div>
-								   	<div class="col-md-3">
-									   	<div class="select-style">
-										   	<select ng-model='note.tag' ng-options="option for option in main.user.tags track by option"></select>
-									   	</div>
-								   	</div>
-							   	</div>
-							   	<div class="row">
-									<textarea class="form-control" rows="3" placeholder="Write note's text here..."></textarea>
+									<textarea class="form-control" ng-model='main.user.create.text' rows="3" placeholder="Write note's text here..."></textarea>
+									<div class="row">
+										<button type="submit" class="btn btn-success col-xs-offset-8 col-xs-3 create-note-btn-submit" ng-click="main.createNote()">Create Note</button>
+									</div>
 								</div>
 							</div>
 							<div ng-show="main.filtered(panel.tab, note)" class="note-block" ng-repeat="note in main.user.notes.order.full_info">
@@ -122,7 +125,7 @@
 									   	</div>
 									   	<div class="col-md-3">
 										   	<div class="select-style">
-											   	<select ng-model='note.tag' ng-options="option for option in main.user.tags track by option"></select>
+											   	<select ng-model='note.tag' ng-change="main.changeMeta(note.path, 'tag', note.tag)" ng-options="option for option in main.user.tags track by option"></select>
 										   	</div>
 									   	</div>
 									   	<div class="col-md-3">

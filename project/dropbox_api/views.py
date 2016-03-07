@@ -1,4 +1,5 @@
 import re
+import json
 
 from django.shortcuts import redirect
 from django.conf import settings
@@ -86,7 +87,6 @@ def dropbox_get_access_token(user):
 def dropbox_get_notes_version_search(request):
     # TEST TEST TEST
     admin = User.objects.get(pk=1)
-
     dbx = dropbox_get_connection(admin)
     client = dropbox_get_connection(admin, 'client')
 
@@ -111,17 +111,21 @@ def dropbox_get_notes_version_alt(request):
     # TEST TEST TEST
     admin = User.objects.get(pk=1)
     dbx = dropbox_get_connection(admin)
+    client = dropbox_get_connection(admin, 'client')
 
-    days = get_notes_by_exceptions(dbx)
-    res_list = custom_funcs.sorted_by_time(days)
-    res_dict = {}
-    for file in res_list:
-        res_dict = custom_funcs.format_date(file, res_dict)
+    result = get_notes_by_exceptions(dbx)
+    result = custom_funcs.sorted_by_time(result)
+
+    res = {}
+    for file in result:
+        res = custom_funcs.format_date(file, res)
+
+    order_res = custom_funcs.format_get_list_full_info(result, client)
 
     return JsonResponse({
-        'format_result': res_dict,
-        'result': res_list,
-        'order': days
+        'format_result': res,
+        'result': order_res,
+        'order': result
     })
 
 
@@ -205,21 +209,36 @@ def dropbox_create_or_edit_note(request):
     # TEST TEST TEST
     admin = User.objects.get(pk=1)
     client = dropbox_get_connection(admin, 'client')
-    new_text = request.GET.get('new_text', 'something_new')
-    note_path = request.GET.get('path')
 
-    action = request.GET.get('action', 'edit')
-    overwrite = bool(action == 'edit')
+    params = json.loads(request.body)
+
+    text = params.get('text')
+    note_path = params.get('path')
+    action = params.get('action')
+    overwrite = (action == 'edit')
 
     if action == 'create':
-        project = request.GET.get('project', settings.DROPBOX_DEFAULT_PROJECT)
-        tag = request.GET.get('tag', settings.DROPBOX_DEFAULT_TAG)
+        project = params.get('project', settings.DROPBOX_DEFAULT_PROJECT)
+        tag = params.get('tag', settings.DROPBOX_DEFAULT_TAG)
         note_path = \
-            timezone.now().strftime('/%Y/%b/%d/deez_{}_{}_%I:%M%p.txt').format(project, tag)
+            timezone.now().strftime(
+                '/%Y/%b/%d/deez_{}_{}_%I:%M%p.txt').format(project, tag)
 
-    if new_text:
-        client.put_file(note_path, new_text, overwrite=overwrite)
-        return JsonResponse({'res': 'success'})
+    if not note_path:
+        return HttpResponseServerError('Bad request')
+
+    client.put_file(note_path, text, overwrite=overwrite)
+
+    return JsonResponse({
+        'res': 'success',
+        'obj': {
+            'path': note_path,
+            'project': project,
+            'tag': tag,
+            'time': note_path.split('/')[-1].split('_')[-1],
+            'date': '/'.join(note_path.split('/')[1:-1]),
+            'text': text
+        }})
 
 
 def dropbox_change_meta_note(request):
@@ -228,20 +247,25 @@ def dropbox_change_meta_note(request):
     client = dropbox_get_connection(admin, 'client')
 
     path = request.GET.get('path')
-    project = request.GET.get('project')
-    tag = request.GET.get('tag')
+    type_meta = request.GET.get('type')
+    meta_name = request.GET.get('meta_name')
+    # project = request.GET.get('project')
+    # tag = request.GET.get('tag')
     path_list = path.split('/')
     if client.search('/{}/'.format('/'.join(path_list[1:-1])), path_list[-1]):
         note_name = path.split('_')
-        if project:
-            note_name[1] = project
-        if tag:
-            note_name[2] = tag
+
+        if type_meta == 'project':
+            position = 1
+        elif type_meta == 'tag':
+            position = 2
+
+        note_name[position] = meta_name
 
         client.file_move(path, '_'.join(note_name))
         return JsonResponse({'res': 'success'})
     else:
-        return JsonResponse({'res': 'file not find'})
+        return HttpResponseServerError('File doesn\'t find')
 # -----------------------------------------------------------
 
 
@@ -329,6 +353,19 @@ def dropbox_add_or_del_meta_files(request):
     else:
         return HttpResponseServerError('Bad request')
 # -----------------------------------------------------------
+
+
+def format_list_to_date(request):
+    print 'hello'
+    params = json.loads(request.body)
+    print params
+    notes = params.get('notes')
+    new_note = params.get('new_note').get('path')
+
+    for note in notes:
+        custom_funcs.format_date(new_note, notes)
+
+    return JsonResponse({'notes': notes})
 
 
 # def dropbox_create_note(request):

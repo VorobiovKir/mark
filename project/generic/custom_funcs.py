@@ -38,7 +38,7 @@ def format_date(clear_str, res_dict=None):
     # !!!!!!!!!!!!!!!!!!!!!!!!!!!
     res_dict = OrderedDict(res_dict)
 
-    file_info = clear_str.split('/')
+    file_info = clear_str.lower().split('/')
 
     try:
         # res_dict[file_info[1]][file_info[2]][file_info[3]].append(file_info[4])

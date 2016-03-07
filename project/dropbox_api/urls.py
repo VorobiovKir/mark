@@ -26,5 +26,8 @@ urlpatterns = [
     url(r'^get_meta_files/$', views.dropbox_get_meta_files,
         name='get_meta_files'),
     url(r'^add_or_del_meta_files/$', views.dropbox_add_or_del_meta_files,
-        name='add_or_del_meta_files')
+        name='add_or_del_meta_files'),
+
+    url(r'^format_to_date/$', views.format_list_to_date,
+        name='format_to_date'),
 ]
