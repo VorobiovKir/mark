@@ -58,6 +58,27 @@
 							<br>
 					   </div>
 					   	<div ng-if="!panel.isSelected(2) && !panel.isSelected(5)">
+					   		<div class="row">
+								<button class="btn btn-success pull-right">Create new note</button>
+								<br>
+							</div>
+							<div class="create-note-block">
+								<div class="row select-group">
+									<div class="col-md-3">
+									   	<div class="select-style">
+										   	<select ng-model='note.project' ng-options="option for option in main.user.projects track by option"></select>
+									   	</div>
+								   	</div>
+								   	<div class="col-md-3">
+									   	<div class="select-style">
+										   	<select ng-model='note.tag' ng-options="option for option in main.user.tags track by option"></select>
+									   	</div>
+								   	</div>
+							   	</div>
+							   	<div class="row">
+									<textarea class="form-control" rows="3" placeholder="Write note's text here..."></textarea>
+								</div>
+							</div>
 							<div ng-show="main.filtered(panel.tab, note)" class="note-block" ng-repeat="note in main.user.notes.order.full_info">
 								<div class="note-block-heading">
 								   	<div class="row">

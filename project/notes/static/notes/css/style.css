@@ -210,3 +210,11 @@ ul li {
     line-height: 30px;
     border: 1px solid #008000;
 }
+
+.create-note-block .select-group{
+    margin: 20px 0;
+}
+
+.create-note-block .select-group .select-style {
+        height: 29px;
+}

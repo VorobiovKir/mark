@@ -126,38 +126,46 @@ def dropbox_get_notes_version_alt(request):
 
 
 def get_notes_by_exceptions(dbx):
-    result = []
+
     REGEXP_FOR_MONTH_FOLDERS = '{}'.format('|'.join(settings.FOLDER_NAME_MONTH))
 
+    clean_years = []
+    clean_month = []
+    clean_days = []
+    clean_files_path = []
+
     dirty_years_folders = dbx.files_list_folder('').entries
-    for clean_years_folder in dirty_years_folders:
-        if isinstance(clean_years_folder, FolderMetadata):
-            if re.match('(?:19|20)\d\d',
-                clean_years_folder.name):
+    for dirty_years_folder in dirty_years_folders:
+        if isinstance(dirty_years_folder, FolderMetadata):
+            if re.match('(?:19|20)\d\d', dirty_years_folder.name):
+                clean_years.append(dirty_years_folder.path_lower)
 
-                dirty_month_folders = \
-                    dbx.files_list_folder(clean_years_folder.path_lower).entries
-                for clean_month_folder in dirty_month_folders:
-                    if isinstance(clean_month_folder, FolderMetadata):
-                        if re.match(REGEXP_FOR_MONTH_FOLDERS,
-                            clean_month_folder.name, re.IGNORECASE):
+    for year_folder_path in clean_years:
+        dirty_month_folders = dbx.files_list_folder(year_folder_path).entries
 
-                            dirty_days_folders = \
-                                dbx.files_list_folder(clean_month_folder.path_lower).entries
-                            for clean_days_folder in dirty_days_folders:
-                                if isinstance(clean_days_folder, FolderMetadata):
-                                    if re.match('\d\d',
-                                        clean_days_folder.name):
+        for dirty_month_folder in dirty_month_folders:
+            if isinstance(dirty_month_folder, FolderMetadata):
+                if re.match(REGEXP_FOR_MONTH_FOLDERS,
+                            dirty_month_folder.name, re.IGNORECASE):
+                    clean_month.append(dirty_month_folder.path_lower)
 
-                                        dirty_files = \
-                                            dbx.files_list_folder(clean_days_folder.path_lower).entries
-                                        for clean_file in dirty_files:
-                                            if isinstance(clean_file, FileMetadata):
-                                                if re.match('deez_(.*)\.txt$',
-                                                    clean_file.name):
+    for month_folder_path in clean_month:
+        dirty_days_folders = dbx.files_list_folder(month_folder_path).entries
 
-                                                    result.append(clean_file.path_lower)
-    return result
+        for dirty_days_folder in dirty_days_folders:
+            if isinstance(dirty_days_folder, FolderMetadata):
+                if re.match('\d\d', dirty_days_folder.name):
+                    clean_days.append(dirty_days_folder.path_lower)
+
+    for days_folder_path in clean_days:
+        dirty_notes_path = dbx.files_list_folder(days_folder_path).entries
+
+        for dirty_note_path in dirty_notes_path:
+            if isinstance(dirty_note_path, FileMetadata):
+                if re.match('deez_(.*)_(.*)_(.*)\.txt$', dirty_note_path.name):
+                    clean_files_path.append(dirty_note_path.path_lower)
+
+    return clean_files_path
 
 
 def get_notes_by_search(dbx):
