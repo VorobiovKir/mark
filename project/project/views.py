@@ -3,7 +3,7 @@ import json
 
 from django.shortcuts import redirect
 from django.conf import settings
-from django.core.urlresolvers import reverse
+from django.core.urlresolvers import reverse, reverse_lazy
 from django.http import (HttpResponseRedirect, HttpResponse,
                          HttpResponseForbidden, HttpResponseServerError)
 from django.contrib.auth.models import User
@@ -12,7 +12,7 @@ from django.utils import timezone
 
 from dropbox import oauth, dropbox
 from dropbox.files import FileMetadata, FolderMetadata
-from dropbox.client import DropboxOAuth2Flow, DropboxClient
+from dropbox.client import DropboxClient, DropboxOAuth2Flow
 
 from generic import custom_funcs
 
@@ -40,9 +40,11 @@ def dropbox_auth_start(request):
 # URL handler for /dropbox-auth-finish
 def dropbox_auth_finish(request):
     try:
-        res = get_dropbox_auth_flow(request.session).finish(request.GET)
+	res = get_dropbox_auth_flow(request.session).finish(request.GET)
+	f = open('test.txt','w+')
         access_token, user_id, url_state = res
-        print res
+	f.write(access_token)
+	f.close()
     except oauth.BadRequestException, e:
         log.error("{}: Oauth bad request {}".format(
             timezone.now().strftime('[%Y/%m/%d] ---  %H:%M:%S'), e))
@@ -67,7 +69,7 @@ def dropbox_auth_finish(request):
         raise e
 
     if access_token:
-        log.info("{}: Get Access Token {}".format(
+        log.debug("{}: Get Access Token {}".format(
             timezone.now().strftime('[%Y/%m/%d] ---  %H:%M:%S'),
             access_token))
         user = request.user
@@ -108,10 +110,9 @@ def dropbox_get_access_token(user):
 # --------------------- GET NOTES ---------------------------
 def dropbox_get_notes_version_search(request):
     # TEST TEST TEST
-    # admin = User.objects.get(pk=1)
-    user = request.user
-    dbx = dropbox_get_connection(user)
-    client = dropbox_get_connection(user, 'client')
+    admin = User.objects.get(pk=1)
+    dbx = dropbox_get_connection(admin)
+    client = dropbox_get_connection(admin, 'client')
 
     result = get_notes_by_search(dbx)
     result = custom_funcs.sorted_by_time(result)
@@ -132,10 +133,9 @@ def dropbox_get_notes_version_search(request):
 
 def dropbox_get_notes_version_alt(request):
     # TEST TEST TEST
-    # admin = User.objects.get(pk=1)
-    user = request.user
-    dbx = dropbox_get_connection(user)
-    client = dropbox_get_connection(user, 'client')
+    admin = User.objects.get(pk=1)
+    dbx = dropbox_get_connection(admin)
+    client = dropbox_get_connection(admin, 'client')
 
     result = get_notes_by_exceptions(dbx)
     result = custom_funcs.sorted_by_time(result)
@@ -155,8 +155,7 @@ def dropbox_get_notes_version_alt(request):
 
 def get_notes_by_exceptions(dbx):
 
-    REGEXP_FOR_MONTH_FOLDERS = '{}'.format(
-        '|'.join(settings.FOLDER_NAME_MONTH))
+    REGEXP_FOR_MONTH_FOLDERS = '{}'.format('|'.join(settings.FOLDER_NAME_MONTH))
 
     clean_years = []
     clean_month = []
@@ -232,9 +231,8 @@ def get_notes_by_search(dbx):
 # --------------------- Create/Edit NOTE ---------------------------
 def dropbox_create_or_edit_note(request):
     # TEST TEST TEST
-    # admin = User.objects.get(pk=1)
-    user = request.user
-    client = dropbox_get_connection(user, 'client')
+    admin = User.objects.get(pk=1)
+    client = dropbox_get_connection(admin, 'client')
 
     params = json.loads(request.body)
 
@@ -269,9 +267,8 @@ def dropbox_create_or_edit_note(request):
 
 def dropbox_change_meta_note(request):
     # TEST TEST TEST
-    # admin = User.objects.get(pk=1)
-    user = request.user
-    client = dropbox_get_connection(user, 'client')
+    admin = User.objects.get(pk=1)
+    client = dropbox_get_connection(admin, 'client')
 
     path = request.GET.get('path')
     type_meta = request.GET.get('type')
@@ -299,9 +296,8 @@ def dropbox_change_meta_note(request):
 # --------------------- Search Note/Folder ------------------
 def dropbox_search(request):
     # TEST TEST TEST
-    # admin = User.objects.get(pk=1)
-    user = request.user
-    dbx = dropbox_get_connection(user)
+    admin = User.objects.get(pk=1)
+    dbx = dropbox_get_connection(admin)
 
     query = request.GET.get('query')
     result = []
@@ -349,9 +345,8 @@ def dropbox_get_meta_data(type_meta_data, api):
 
 def dropbox_add_or_del_meta_files(request):
     # TEST TEST TEST
-    # admin = User.objects.get(pk=1)
-    user = request.user
-    client = dropbox_get_connection(user, 'client')
+    admin = User.objects.get(pk=1)
+    client = dropbox_get_connection(admin, 'client')
 
     search_type = request.GET.get('search_type', '')
     query_name = request.GET.get('query_name', '')
@@ -397,9 +392,8 @@ def format_list_to_date(request):
 
 def dropbox_upload_file(request):
     # TEST TEST TEST
-    # admin = User.objects.get(pk=1)
-    user = request.user
-    client = dropbox_get_connection(user, 'client')
+    admin = User.objects.get(pk=1)
+    client = dropbox_get_connection(admin, 'client')
 
     file = request.FILES.get('file')
     full_path = request.POST.get('path')

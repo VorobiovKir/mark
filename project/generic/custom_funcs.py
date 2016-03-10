@@ -61,7 +61,7 @@ def format_date(clear_str, res_dict=None):
                 file_info[1]: {
                     file_info[2]: {
                         # file_info[3]: [file_info[4]]
-                        file_info[3]: clear_str
+                        file_info[3]: [clear_str]
                     }
                 }
             })

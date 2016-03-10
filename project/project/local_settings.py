@@ -5,8 +5,12 @@ AUTH_PASSWORD_VALIDATORS = []
 
 
 # Drobox Api
-DROPBOX_APP_KEY = 'mrcw8jglsdkv0ic'
-DROPBOX_APP_SECRET = '1czbe7rq0i0eagc'
+# DROPBOX_APP_KEY = 'mrcw8jglsdkv0ic'
+# DROPBOX_APP_SECRET = '1czbe7rq0i0eagc'
+# DROPBOX_APP_TYPE = 'app_folder'
+
+DROPBOX_APP_KEY = 'ygbt7puo1yzd97m'
+DROPBOX_APP_SECRET = '2hxp644e2gsyjhj'
 DROPBOX_APP_TYPE = 'app_folder'
 
 DROPBOX_META_PATH = '/.meta/'
@@ -16,7 +20,7 @@ DROPBOX_TAGS_FILE = 'tags.txt'
 DROPBOX_DEFAULT_PROJECT = 'notebook'
 DROPBOX_DEFAULT_TAG = 'tag'
 
-SITE_PATH = '127.0.0.1:8000'
+SITE_PATH = 'http://127.0.0.1:8000/'
 
 
 FOLDER_NAME_MONTH = ['jan', 'feb', 'mar', 'apr', 'may', 'june', 'july',

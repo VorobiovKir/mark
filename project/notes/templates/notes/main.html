@@ -12,7 +12,6 @@
 	<script type="text/javascript" src="{% static "notes/js/functions/toggleTimeliner.js" %}"></script>
 	<script type="text/javascript" src="{% static "notes/js/functions/progressBar.js" %}"></script>
 	<!-- [A] Controllers -->
-	<script type="text/javascript" src="{% static "notes/js/controllers/TimelinerController.js" %}"></script>
 	<script type="text/javascript" src="{% static "notes/js/controllers/MainController.js" %}"></script>
 	<script type="text/javascript" src="{% static "notes/js/controllers/PanelController.js" %}"></script>
 	<!-- [A] Module -->
@@ -97,7 +96,10 @@
 										   	</div>
 									   	</div>
 									   	<div class="col-md-3">
-										   	<button class="btn btn-block insert_btn"><input type="file" id="exampleInputFile" class="hide"/>Insert File</button>
+									   		<form data="form_file_[[ note.path ]]" enctype="multipart/form-data">
+									   			<input type="file" style="display:none" name="file" data-file="file_[[ note.path ]]" onchange="angular.element(this).scope().sendFileAjax()" />
+									   		</form>
+									   		<button class="btn btn-block insert_btn" ng-click="main.selectFile(note.path)">Insert File</button>
 									   	</div>
 								   	</div>
 								</div>
@@ -130,12 +132,15 @@
 									   	</div>
 									   	<div class="col-md-3">
 								   			<!-- <input type="file" name="file" ng-model="main.user.file"> -->
-								   			<form action="" data-file="form_file_[[ note.path ]]" enctype="multipart/form-data">
-								   				<input type="file" name="file" id="file" data-file="file_[[ note.path ]]" />
+								   			<!-- <form action="" data-file="form_file_[[ note.path ]]" enctype="multipart/form-data">
+								   				<input type="file" name="file" id="file" data-file="file_[[ note.path ]]" ng-change="main.sendFileAjax(note.path)" />
 								   			</form>
-								   			<input type="submit" ng-click="main.sendFileAjax(note.path)">
-
+								   			<input type="submit" ng-click="main.sendFileAjax(note.path)"> -->
 										   	<!-- <button class="btn btn-block insert_btn"><input type="file" id="exampleInputFile" class="hide"/>Insert File</button> -->
+											<form data="form_file_[[ note.path ]]" enctype="multipart/form-data">
+												<input type="file" style="display:none" name="file" data-file="file_[[ note.path ]]" onchange="angular.element(this).scope().sendFileAjax()" />
+											</form>
+											<button class="btn btn-block insert_btn" ng-click="main.selectFile(note.path)">Insert File</button>
 									   	</div>
 								   	</div>
 								</div>
@@ -196,7 +201,7 @@
 										<li ng-repeat="(month, month_value) in year_value">
 											<span class="date-month" onclick="toggleTimeliner(event);">[[ month ]]</span> &#8212;
 											<ul class="timeliner-day">
-												<li ng-repeat="(day, day_value) in month_value"><p class="date" ng-click="main.changeDate(day_value)">[[ day ]]</p></li>
+												<li ng-repeat="(day, day_value) in month_value"><p class="date" ng-click="main.changeDate(day_value[0])">[[ day ]]</p></li>
 											</ul>
 										</li>
 									</ul>

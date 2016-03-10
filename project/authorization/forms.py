@@ -77,6 +77,5 @@ class RegistrationForm(UserCreationForm):
         user = super(RegistrationForm, self).save(commit=False)
         if commit:
             user.is_active = False
-            print 'hell'
             user.save()
         return user

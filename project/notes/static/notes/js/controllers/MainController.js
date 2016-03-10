@@ -115,7 +115,8 @@ var MainController = function($http, $scope) {
         });
     }
 
-    this.sendFileAjax = function(path) {
+    $scope.sendFileAjax = function() {
+        var path = this.note.path;
         var fd = new FormData();
         fd.append("file", $("input[data-file='file_" + path + "']")[0].files[0]);
         fd.append("path", path);
@@ -126,7 +127,7 @@ var MainController = function($http, $scope) {
             headers: {'Content-Type': undefined },
             transformRequest: angular.identity
         }).success(function(data) {
-            alert(data);
+
         })
     }
 
@@ -160,6 +161,11 @@ var MainController = function($http, $scope) {
         }
         // console.log(that.user.notes.order.full_info);
     }
+
+    this.selectFile = function(path){
+         $("input[data-file='file_" + path + "']").click();
+    }
+
 
     this.changeDate = function(user_date) {
         all_notes = that.user.notes.order.full_info;
