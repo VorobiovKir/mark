@@ -402,8 +402,10 @@ def dropbox_upload_file(request):
     client = dropbox_get_connection(user, 'client')
 
     file = request.FILES.get('file')
+
     full_path = request.POST.get('path')
     folder = '/'.join(full_path.split('/')[:-1])
+    note_name = full_path.split('/')[-1]
 
     if file:
         file_id = client.upload_chunk(file)
@@ -411,6 +413,24 @@ def dropbox_upload_file(request):
             'dropbox{}/{}'.format(folder, file.name), file_id[1])
 
         if res:
+            file_full_path =\
+                '.meta/files/{}/files_{}'.format(folder, note_name[5:])
+            file_path = '/'.join(file_full_path.split('/')[:-1])
+            overwrite = False
+            if client.search(file_path, 'files_{}'.format(note_name[5:])):
+                res = client.get_file(file_full_path).read()
+                if res:
+                    text = json.loads(res)
+                    text.append(
+                        ['{}/{}'.format(folder, file.name), file.content_type])
+                    text = json.dumps(text)
+                    overwrite = True
+            else:
+                text = json.dumps(
+                    [['{}/{}'.format(folder, file.name), file.content_type]])
+
+            client.put_file(file_full_path, text, overwrite=overwrite)
+
             return JsonResponse({'res': 'success'})
 
     return HttpResponseServerError('Something going wrong')

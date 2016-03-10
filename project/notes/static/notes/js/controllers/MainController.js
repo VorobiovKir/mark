@@ -250,6 +250,7 @@ var MainController = function($http, $scope) {
             that.user.notes.order.form_date = data['format_result'];
             that.user.notes.clear = data['order'];
             that.preloading(3);
+            console.log(that.user.notes);
         });
     }
 

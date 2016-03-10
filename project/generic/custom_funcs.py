@@ -1,3 +1,5 @@
+import json
+
 from collections import OrderedDict
 
 from django.conf import settings
@@ -11,11 +13,13 @@ def dropbox_get_note(client, path):
     # path = request.GET.get('path')
     # return JsonResponse({'content': result})
 
-    with client.get_file(path) as f:
-        result = f.read()
+    try:
+        with client.get_file(path) as f:
+            result = f.read()
+    except:
+        result = ''
 
     return result
-
 
 
 def format_date(clear_str, res_dict=None):
@@ -107,13 +111,23 @@ def format_get_list_full_info(clear_file_list, client):
     for file_name in clear_file_list:
         date, name = file_name.split('/deez_')
         info = name.split('_')
+        res_files = []
+
+        if client.search('.meta/files/{}/'.format(date), 'files_{}'.format(name)):
+            file_path = '.meta/files/{}/files_{}'.format(date, name)
+            files = dropbox_get_note(client, file_path)
+            if files:
+                print files
+                res_files = json.loads(files)
+
         res_dict.append({
             'path': file_name,
             'project': info[0],
             'tag': info[1],
             'time': info[2],
             'date': date,
-            'text': dropbox_get_note(client, file_name)
+            'text': dropbox_get_note(client, file_name),
+            'files': res_files
         })
     return res_dict
 

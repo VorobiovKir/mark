@@ -108,8 +108,11 @@
 								   <div class="row">
 										<br>
 										<div class="pull-right file-icons">
-											<a href="#" target="_blank"><img width="50" src="{% static "main/images/text.png" %}" data-toggle="tooltip" data-placement="top" title="deez_06:49PM.txt" alt="text_file" /></a>
-											<a href="#"><img width="50" src="{% static "main/images/pdf.png" %}" data-toggle="tooltip" data-placement="top" title="some_name.pdf" alt="pdf_file" /></a>
+											<a href="#" ng-repeat="file in note.files">
+												<img src="{% static "main/images/text.png" %}" data-toggle="tooltip" data-placement="top" title="[[ file[0] ]]" alt="text_file" width="50">[[ file[1].split('/')[1] ]]
+											</a>
+											<!-- <a href="#" target="_blank"><img width="50" src="{% static "main/images/text.png" %}" data-toggle="tooltip" data-placement="top" title="deez_06:49PM.txt" alt="text_file" /></a>
+											<a href="#"><img width="50" src="{% static "main/images/pdf.png" %}" data-toggle="tooltip" data-placement="top" title="some_name.pdf" alt="pdf_file" /></a> -->
 										</div>
 									</div>
 								</div>
