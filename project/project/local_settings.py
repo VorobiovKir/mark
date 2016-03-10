@@ -16,7 +16,7 @@ DROPBOX_TAGS_FILE = 'tags.txt'
 DROPBOX_DEFAULT_PROJECT = 'notebook'
 DROPBOX_DEFAULT_TAG = 'tag'
 
-SITE_PATH = 'https://light-it-07.tk/'
+SITE_PATH = '127.0.0.1:8000'
 
 
 FOLDER_NAME_MONTH = ['jan', 'feb', 'mar', 'apr', 'may', 'june', 'july',

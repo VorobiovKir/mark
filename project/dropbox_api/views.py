@@ -3,7 +3,7 @@ import json
 
 from django.shortcuts import redirect
 from django.conf import settings
-from django.core.urlresolvers import reverse
+from django.core.urlresolvers import reverse, reverse_lazy
 from django.http import (HttpResponseRedirect, HttpResponse,
                          HttpResponseForbidden, HttpResponseServerError)
 from django.contrib.auth.models import User
@@ -24,7 +24,8 @@ log = logging.getLogger(__name__)
 
 # --------------------- AUTHORIZATION VIEWS ---------------------------
 def get_dropbox_auth_flow(web_app_session):
-    redirect_uri = '{}dropbox/auth_finish/'.format(settings.SITE_PATH)
+    # redirect_uri = '{}dropbox/auth_finish/'.format(settings.SITE_PATH)
+    redirect_uri = reverse_lazy('dropbox:auth_finish')
     return DropboxOAuth2Flow(
         settings.DROPBOX_APP_KEY, settings.DROPBOX_APP_SECRET,
         redirect_uri, web_app_session, "dropbox-auth-csrf-token")
@@ -42,31 +43,32 @@ def dropbox_auth_finish(request):
         access_token, user_id, url_state = \
             get_dropbox_auth_flow(request.session).finish(request.GET)
     except oauth.BadRequestException, e:
-        log.error("{}: Oauth bad request {}").format(
-            timezone.now().strftime('[%Y/%m/%d] ---  %H:%M:%S'), e)
+        log.error("{}: Oauth bad request {}".format(
+            timezone.now().strftime('[%Y/%m/%d] ---  %H:%M:%S'), e))
         return HttpResponse(status=400)
     except oauth.BadStateException, e:
-        log.error("{}: Bad state exception {}").format(
-            timezone.now().strftime('[%Y/%m/%d] ---  %H:%M:%S'), e)
-        return HttpResponseRedirect(
-            '{}dropbox/auth_start/'.format(settings.SITE_PATH))
+        log.error("{}: Bad state exception {}".format(
+            timezone.now().strftime('[%Y/%m/%d] ---  %H:%M:%S'), e))
+        return redirect(reverse('dropbox:auth_start'))
+        # return HttpResponseRedirect(
+        #     '{}dropbox/auth_start/'.format(settings.SITE_PATH))
     except oauth.CsrfException, e:
-        log.error("{}: Oauth Csrf error {}").format(
-            timezone.now().strftime('[%Y/%m/%d] ---  %H:%M:%S'), e)
+        log.error("{}: Oauth Csrf error {}".format(
+            timezone.now().strftime('[%Y/%m/%d] ---  %H:%M:%S'), e))
         return HttpResponseForbidden()
     except oauth.NotApprovedException, e:
-        log.error("{}: Oauth not approved exception {}").format(
-            timezone.now().strftime('[%Y/%m/%d] ---  %H:%M:%S'), e)
+        log.error("{}: Oauth not approved exception {}".format(
+            timezone.now().strftime('[%Y/%m/%d] ---  %H:%M:%S'), e))
         return HttpResponseRedirect(reverse('auth:logout'))
     except oauth.ProviderException, e:
-        log.error("{}: Oauth provider exception {}").format(
-            timezone.now().strftime('[%Y/%m/%d] ---  %H:%M:%S'), e)
+        log.error("{}: Oauth provider exception {}".format(
+            timezone.now().strftime('[%Y/%m/%d] ---  %H:%M:%S'), e))
         raise e
 
     if access_token:
-        log.info("{}: Get Access Token {}").format(
+        log.info("{}: Get Access Token {}".format(
             timezone.now().strftime('[%Y/%m/%d] ---  %H:%M:%S'),
-            access_token)
+            access_token))
         user = request.user
         user.is_active = True
         user.save()
