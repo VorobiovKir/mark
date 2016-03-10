@@ -1,0 +1,143 @@
+@import url(https://fonts.googleapis.com/css?family=Rock+Salt);
+@import url(https://fonts.googleapis.com/css?family=Roboto);
+
+.container {
+    font-family: 'Roboto';
+}
+
+.brand, .slogan {
+    font-family: 'Rock Salt';
+    color: #000;
+}
+
+.brand {
+    font-weight: bold;
+}
+
+.slogan {
+    font-size: 20px;
+    margin-top: 40px;
+}
+
+.sign-up-btn:link, .sign-up-btn:visited {
+    background-color: #00BFFF;
+    border: none;
+    margin-right: 10px;
+    color: #fff;
+    width: 180px;
+    margin-bottom:10px;
+}
+
+.sign-up-btn:hover, .sign-up-btn:active {
+    background-color: #00A0C8;
+}
+
+.log-in-btn:link, .log-in-btn:visited {
+    display: inline-block;
+    text-decoration: none;
+    text-align: center;
+    width: 120px;
+    color: #000;
+    border:1px solid transparent;
+    margin-bottom:10px;
+}
+
+.log-in-btn:hover, .log-in-btn:active {
+    color: #00A0C8;
+    border:1px solid #D3D3D3;
+}
+
+.welcome-cont, .login-cont {
+    margin-top: 150px;
+}
+
+.errors-form, .errors-field {
+    padding: 2px 4px;
+    color: #c7254e;
+    background-color: #f9f2f4;
+    border-radius: 4px;
+}
+
+.errors-form-field {
+    padding: 2px 4px;
+    color: #c7254e;
+    font-weight: bold;
+    font-size: 13px;
+}
+
+.input-error {
+    border: 1px solid #c7254e;
+}
+
+@media (min-width: 400px) and (max-width: 768px) {
+    .boy {
+        width:40%;
+    }
+    .slogan {
+        width:60%;
+    }
+    .logo_man {
+        width:50%;
+        margin:0 25%;
+    }
+}
+
+.switch-password {
+    display: inline-block;
+    width: 21px;
+    height: 21px;
+    margin-left: 20px;
+    margin-right: 10px;
+    background: #fff;
+    border: 1px solid #afaafa;
+}
+
+.login_btn, .login_btn:focus {
+    background: #00BFFF;
+    border:1px solid #00BFFF;
+    padding:10px 15px;
+    color:#fff;
+}
+
+.login_btn:hover, .login_btn:active {
+    background: #00BBDF;
+    color: #fff;
+}
+
+.stay_logged {
+    background:#D3D3D3;
+    font-size: 15px;
+    border-radius: 4px;
+    border:1px solid #D3D3D3;
+}
+
+.login-form .checkbox input[type="checkbox"] {
+    width:20px;
+    height:20px;
+    display: block;
+    background:#fff;
+    margin-top:0;
+    margin-right:5px;
+    margin-left:-25px;
+}
+
+.login-form .input-group-addon {
+    padding:0 15px 0 35px;
+}
+
+.login-form .input-group-addon .checkbox {
+    margin:0;
+    margin-top:7px;
+}
+
+.login-form .input-group-addon .checkbox input[type="checkbox"] {
+    margin-top:-3px;
+}
+
+.logo_man {
+    margin-bottom:10px;
+}
+
+.page-header {
+    border: none;
+}

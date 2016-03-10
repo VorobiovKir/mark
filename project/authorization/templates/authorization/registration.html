@@ -1,0 +1,37 @@
+{% extends "authorization.html" %}
+{% load staticfiles %}
+
+{% block title %}: Registration{% endblock title %}
+
+
+{% block content %}
+<div class="container">
+    <div class="col-sm-offset-1 col-sm-9 login-cont">
+        <div class="row">
+            <img class="col-sm-3 col-xs-12 logo_man" src="{% static 'main/images/deez_notes_logo.png' %}">
+            <form action="" method="POST" class="col-sm-offset-1 col-sm-8 login-form col-xs-12">
+                {% csrf_token %}
+                {% for error in form.non_field_errors %}
+                    <p class="errors-form bg-danger">{{ error }}</p>
+                {% endfor %}
+                {% for field in form %}
+                <div class="form-group">
+                    <label for="{{ field.name }}">{{ field.label }}</label>
+                    <input type="{{ field.field.widget.input_type }}" name="{{ field.name }}" value="{% if field.name != 'password1' and field.name != 'password2' %}{{ field.value|default_if_none:"" }}{% endif %}" class="form-control {% if field.errors %}input-error{% endif %}" id="{{ field.name }}" placeholder="{{ field.label }}">
+                    {% for error in field.errors %}
+                        <p class="errors-form-field">{{ error }}</p>
+                    {% endfor %}
+                </div>
+                {% endfor %}
+                <div class="form-group">
+                    <div class="row">
+                        <div class="col-xs-12">
+                            <button class="btn login_btn btn-block">Registration</button>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock content %}

@@ -1,0 +1,236 @@
+@import url(https://fonts.googleapis.com/css?family=Roboto);
+@import url(https://fonts.googleapis.com/css?family=Open+Sans:400,300,600,700&subset=latin,cyrillic);
+
+.main-container {
+    font-family: Roboto;
+    font-size: 16px;
+}
+
+.page-header {
+    border: none;
+    width: 100%;
+}
+.search-btn, .settings-btn {
+    margin-top: 20px;
+    margin-right: 30px;
+}
+.daily_journal, .notebook_icon, .tag_icon{
+    position:fixed;
+    bottom:20%;
+    left:30px;
+}
+.notebook_icon{
+    bottom:40%;
+}
+.daily_journal{
+    bottom:60%;
+}
+.main{
+    margin-left:30px;
+}
+
+/*@media (min-width: 300px) {
+    .container {
+       margin-left: 60px;
+    }
+}*/
+
+.note-block .note-block-heading {
+    background-color: #999;
+    padding: 5px 30px;
+    color: #fff;
+    border: 1px solid #787878;
+    height: 38px;
+}
+
+.note-block {
+    border-bottom-left-radius: 10px;
+    border-bottom-right-radius: 10px;
+    border: 1px solid #7F7F7F;
+    margin-bottom: 20px;
+}
+.note-block .note-block-heading .note-block-date {
+    display: inline-block;
+    line-height: 25px;
+    font-size:18px;
+}
+
+.note-block .note-block-body {
+    padding: 20px;
+}
+
+.select-style {
+    border: 1px solid #00BFFF;
+    width: 100%;
+    border-radius:4px;
+}
+.select-style select {
+    border: none;
+    height: 100%;
+    width: 100%;
+    color: #fff;
+    box-shadow: none;
+    background-image: none;
+    background-color: #00BFFF;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+}
+.select-style select:focus {
+    outline: none;
+}
+.select-style option {
+    /*background-color: #fff;*/
+    font-size: 16px;
+    text-align: center;
+}
+
+.select-tag {
+    height: 35px;
+    width: 20%;
+}
+
+.file-icons {
+    padding: 0 30px;
+}
+.insert_btn{
+    padding:1px 0;
+    border: 1px solid #00BFFF;
+    background:#00BFFF;
+    border-radius:4px;
+}
+.insert_btn:hover{
+    color: #fff;
+}
+
+.timeliner li{
+    font-family: "Open Sans",​sans-serif;
+    font-size:16px;
+    font-weight:400;
+    color:#9eacb4;
+    cursor:default;
+}
+.timeliner li span{
+    color:#2C3E50;
+}
+.timeliner-month{
+    margin-left: -55px;
+}
+.timeliner-month li{
+    margin-bottom: 10px;
+    margin-top: 7px;
+}
+.timeliner-month li span{
+    /*color:#44b6ae;*/
+    color: #c5c5c5;
+}
+.timeliner-day{
+    display: none;
+}
+
+ul {
+    list-style-type: none;
+    font-family: Roboto;
+}
+ul li {
+    margin-bottom: 15px;
+    color: gray;
+    text-align: right;
+    font-size: 14px;
+}
+.date {
+    border: 1px solid #44b6ae;
+    color: #44b6ae;
+    /*border: 1px solid #c5c5c5;
+    color: #c5c5c5;*/
+    font-size: 16px;
+    padding: 2px 8px;
+    position: relative;
+    margin-right: 10px;
+    margin-bottom:5px;
+    border-radius: 2px;
+}
+.date:after {
+    content: '';
+    position: absolute;
+    top: 10px;
+    right: -5px;
+    width: 7px;
+    height: 7px;
+    transform: rotate(45deg);
+    background-color: #fff;
+    /*border-top: 1px solid #c5c5c5;
+    border-right: 1px solid #c5c5c5;*/
+    border-top: 1px solid #44b6ae;
+    border-right: 1px solid #44b6ae;
+}
+
+.date:hover {
+    border: 1px solid #00BFFF;
+    color: #fff;
+    background-color: #00BFFF;
+    cursor: pointer;
+}
+
+.date:hover:after {
+    content: '';
+    background-color: #00BFFF;
+    border-top: 1px solid #00BFFF;
+    border-right: 1px solid #00BFFF;
+}
+
+.date-month:hover{
+    cursor: pointer;
+    color: #5A5A5A;
+}
+
+#progressbar .ui-progressbar-value {
+    background-color: #00BFFF;
+}
+
+#progressbar{
+    padding: 0;
+    height: 20px;
+    border: 1px solid #00BFFF;
+    z-index: 3;
+}
+
+#progress-block{
+    margin-top: 350px;
+    font-family: Roboto;
+}
+
+#load-screen{
+    display: none;
+}
+
+.bg-success{
+    height: 31px;
+    border-radius: 5px;
+    line-height: 30px;
+    border: 1px solid #008000;
+}
+
+.create-note-block {
+    border: 2px solid #00BFFF;
+    padding: 15px;
+    border-radius: 5px;
+    margin: 20px 0;
+    display: none;
+}
+
+.create-note-block .select-group{
+    margin: 20px 0;
+}
+
+.create-note-block .select-group .select-style {
+        height: 29px;
+}
+
+.create-note-block .create-note-btn-submit {
+    margin-top: 20px;
+}
+
+.create-note-btn {
+    margin-bottom: 20px;
+}

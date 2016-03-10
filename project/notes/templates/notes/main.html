@@ -1,0 +1,206 @@
+{% extends "base.html" %}
+{% load staticfiles %}
+
+{% block title %}: Main{% endblock title %}
+
+{% block local_css %}
+	<link rel="stylesheet" type="text/css" href="{% static "notes/css/style.css" %}">
+{% endblock local_css %}
+
+{% block local_js %}
+	<script type="text/javascript" src="{% static "notes/js/functions/tooltipBtn.js" %}"></script>
+	<script type="text/javascript" src="{% static "notes/js/functions/toggleTimeliner.js" %}"></script>
+	<script type="text/javascript" src="{% static "notes/js/functions/progressBar.js" %}"></script>
+	<!-- [A] Controllers -->
+	<script type="text/javascript" src="{% static "notes/js/controllers/TimelinerController.js" %}"></script>
+	<script type="text/javascript" src="{% static "notes/js/controllers/MainController.js" %}"></script>
+	<script type="text/javascript" src="{% static "notes/js/controllers/PanelController.js" %}"></script>
+	<!-- [A] Module -->
+	<script type="text/javascript" src="{% static "notes/js/main.js" %}"></script>
+{% endblock local_js %}
+
+{% block content %}
+<div ng-app='MainApp' ng-cloak>
+	<div ng-controller="MainController as main">
+		<div class="row" ng-show="!main.isPreload">
+			<div id="progress-block" class="col-xs-4 col-xs-offset-4">
+				<p class="text-center">Please wait, preloading...</p>
+				<div id="progressbar"></div>
+			</div>
+		</div>
+		<div id="load-screen">
+			<div ng-controller="PanelController as panel">
+				<div class="page-header">
+					<a ng-click="panel.selectTab(1);" href="#" class="main"><img width="80" src="{% static 'main/images/deez_notes_logo.png' %}"></a>
+					<p class="pull-right">
+						<a href="#"><img width="50" src="{% static "main/images/search_icon.png" %}" class="search-btn" alt=""></a>
+						<a ng-click="panel.selectTab(5);" href="#"><img width="50" src="{% static "main/images/settings_icon.png" %}" alt="" class="settings-btn"></a>
+					</p>
+				</div>
+				<div class="page-container" >
+					<a ng-click="panel.selectTab(2);" href="#" class="daily_journal" data-toggle="tooltip" data-placement="top" title="Daily Journal"><img width="80" src="{% static 'main/images/daily_journal_icon.png' %}"/></a>
+					<a ng-click="panel.selectTab(3);" href="#" class="notebook_icon" data-toggle="tooltip" data-placement="top" title="Notebook"><img width="80" src="{% static 'main/images/notebook_icon.png' %}"/></a>
+					<a ng-click="panel.selectTab(4);" href="#" class="tag_icon" data-toggle="tooltip" data-placement="top" title="Tag"><img width="80" src="{% static 'main/images/tag_icon.png' %}"/></a>
+
+					<div class="container main-container col-xs-8 col-xs-offset-2">
+						<h1 class="text-center">Hello, {{ request.user.username|title }}!</h1>
+						<br/>
+						<div ng-if="panel.isSelected(3)">
+							<div class="select-style select-tag">
+								<select ng-model='main.filters.projects' ng-options="option for option in main.user.projects track by option"></select>
+							</div>
+							<br>
+					   </div>
+					   <div ng-if="panel.isSelected(4)">
+							<div class="select-style select-tag">
+								<select ng-model='main.filters.tags' ng-options="option for option in main.user.tags track by option"></select>
+							</div>
+							<br>
+					   </div>
+					   	<div ng-if="!panel.isSelected(2) && !panel.isSelected(5)">
+					   		<div ng-if="panel.isSelected(1)">
+						   		<div class="row">
+									<button class="btn btn-info pull-right create-note-btn" ng-click="main.toogleCreateNote()">Create new note</button>
+									<br>
+								</div>
+								<div class="create-note-block">
+									<div class="row select-group">
+										<div class="col-md-3">
+										   	<div class="select-style">
+											   	<select ng-model='main.user.create.project' ng-options="option for option in main.user.projects track by option"></select>
+										   	</div>
+									   	</div>
+									   	<div class="col-md-3">
+										   	<div class="select-style">
+											   	<select ng-model='main.user.create.tag' ng-options="option for option in main.user.tags track by option"></select>
+										   	</div>
+									   	</div>
+								   	</div>
+									<textarea class="form-control" ng-model='main.user.create.text' rows="3" placeholder="Write note's text here..."></textarea>
+									<div class="row">
+										<button type="submit" class="btn btn-success col-xs-offset-8 col-xs-3 create-note-btn-submit" ng-click="main.createNote()">Create Note</button>
+									</div>
+								</div>
+							</div>
+							<div ng-show="main.filtered(panel.tab, note)" class="note-block" ng-repeat="note in main.user.notes.order.full_info">
+								<div class="note-block-heading">
+								   	<div class="row">
+									   	<span class="col-md-3 note-block-date">[[ note.date ]]</span>
+									   	<div class="col-md-3">
+										   	<div class="select-style">
+											   	<select ng-model='note.project' ng-options="option for option in main.user.projects track by option"></select>
+										   	</div>
+									   	</div>
+									   	<div class="col-md-3">
+										   	<div class="select-style">
+											   	<select ng-model='note.tag' ng-options="option for option in main.user.tags track by option"></select>
+										   	</div>
+									   	</div>
+									   	<div class="col-md-3">
+										   	<button class="btn btn-block insert_btn"><input type="file" id="exampleInputFile" class="hide"/>Insert File</button>
+									   	</div>
+								   	</div>
+								</div>
+								<div class="note-block-body">
+								   <p>[[ note.text ]]</p>
+								   <div class="row">
+										<br>
+										<div class="pull-right file-icons">
+											<a href="#" target="_blank"><img width="50" src="{% static "main/images/text.png" %}" data-toggle="tooltip" data-placement="top" title="deez_06:49PM.txt" alt="text_file" /></a>
+											<a href="#"><img width="50" src="{% static "main/images/pdf.png" %}" data-toggle="tooltip" data-placement="top" title="some_name.pdf" alt="pdf_file" /></a>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div ng-if="panel.isSelected(2)">
+							<div class="note-block" ng-repeat="note in main.timeliner.current_list">
+								<div class="note-block-heading">
+								   	<div class="row">
+									   	<span class="col-md-3 note-block-date">[[ note.date ]]</span>
+									   	<div class="col-md-3">
+										   	<div class="select-style">
+											   	<select ng-model='note.project' ng-options="option for option in main.user.projects track by option"></select>
+										   	</div>
+									   	</div>
+									   	<div class="col-md-3">
+										   	<div class="select-style">
+											   	<select ng-model='note.tag' ng-change="main.changeMeta(note.path, 'tag', note.tag)" ng-options="option for option in main.user.tags track by option"></select>
+										   	</div>
+									   	</div>
+									   	<div class="col-md-3">
+										   	<button class="btn btn-block insert_btn"><input type="file" id="exampleInputFile" class="hide"/>Insert File</button>
+									   	</div>
+								   	</div>
+								</div>
+								<div class="note-block-body">
+								   <p>[[ note.text ]]</p>
+								   <div class="row">
+										<br>
+										<div class="pull-right file-icons">
+											<a href="#" target="_blank"><img width="50" src="{% static "main/images/text.png" %}" data-toggle="tooltip" data-placement="top" title="deez_06:49PM.txt" alt="text_file" /></a>
+											<a href="#"><img width="50" src="{% static "main/images/pdf.png" %}" data-toggle="tooltip" data-placement="top" title="some_name.pdf" alt="pdf_file" /></a>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div ng-if="panel.isSelected(5)">
+							<br>
+							<div ng-show="main.messages.success.settings" class="text-center bg-success" role="alert" ng-bind="main.messages.success.settings"></div>
+							<div class="row">
+								<div class="col-xs-6 col-xs-offset-3">
+									<hr>
+									<div class="form-group">
+										<label for="projectInput">Add new project</label>
+										<p class="text-danger" ng-bind="main.user.choices.errors.projects"></p>
+										<div class="input-group">
+											<input type="text" id="projectInput" ng-model="main.user.choices.projects" class="form-control" placeholder="Project">
+											<span class="input-group-btn">
+												<button class="btn btn-default" type="button" ng-click="main.addDelMeta('projects', 'add')">Add</button>
+											</span>
+										</div>
+									</div>
+								</div>
+								<br>
+							</div>
+							<div class="row">
+								<div class="col-xs-6 col-xs-offset-3">
+									<hr>
+									<div class="form-group">
+										<label for="tagInput">Add new tag</label>
+										<p class="text-danger" ng-bind="main.user.choices.errors.tags"></p>
+										<div class="input-group">
+											<input type="text" id="tagInput" ng-model="main.user.choices.tags" class="form-control" placeholder="Tag">
+											<span class="input-group-btn">
+												<button class="btn btn-default" ng-click="main.addDelMeta('tags', 'add')" type="button">Add</button>
+											</span>
+										</div>
+									</div>
+								</div>
+								<br>
+							</div>
+						</div>
+					</div>
+					<div ng-if="panel.isSelected(2)" class="timeliner_block pull-right col-xs-2">
+						<ul class="timeliner" id="timeliner">
+							<li ng-repeat="(year, year_value) in main.user.notes.order.form_date">
+								<span>[[ year ]] &#8212;
+									<ul class="timeliner-month">
+										<li ng-repeat="(month, month_value) in year_value">
+											<span class="date-month" onclick="toggleTimeliner(event);">[[ month ]]</span> &#8212;
+											<ul class="timeliner-day">
+												<li ng-repeat="(day, day_value) in month_value"><p class="date" ng-click="main.changeDate(day_value)">[[ day ]]</p></li>
+											</ul>
+										</li>
+									</ul>
+								</span>
+							</li>
+						</ul>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+{% endblock content %}

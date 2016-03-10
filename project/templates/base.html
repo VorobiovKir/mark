@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Mark Buff{% block title %}{% endblock title %}</title>
+    {% include "base_part/styles.html" %}
+    <!-- user css -->
+    {% block local_css %}{% endblock local_css %}
+</head>
+<body>
+    {% block content %}{% endblock content %}
+    {% include "base_part/scripts.html" %}
+    <!-- user js -->
+    {% block local_js %}{% endblock local_js %}
+</body>
+</html>
