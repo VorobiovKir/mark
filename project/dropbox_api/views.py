@@ -18,6 +18,9 @@ from generic import custom_funcs
 
 from .models import Dropbox
 
+import logging
+log = logging.getLogger(__name__)
+
 
 # --------------------- AUTHORIZATION VIEWS ---------------------------
 def get_dropbox_auth_flow(web_app_session):
@@ -39,27 +42,42 @@ def dropbox_auth_finish(request):
         access_token, user_id, url_state = \
             get_dropbox_auth_flow(request.session).finish(request.GET)
     except oauth.BadRequestException, e:
+        log.error("{}: Oauth bad request {}").format(
+            timezone.now().strftime('[%Y/%m/%d] ---  %H:%M:%S'), e)
         return HttpResponse(status=400)
     except oauth.BadStateException, e:
-        # Start the auth flow again.
+        log.error("{}: Bad state exception {}").format(
+            timezone.now().strftime('[%Y/%m/%d] ---  %H:%M:%S'), e)
         return HttpResponseRedirect(
             '{}dropbox/auth_start/'.format(settings.SITE_PATH))
     except oauth.CsrfException, e:
+        log.error("{}: Oauth Csrf error {}").format(
+            timezone.now().strftime('[%Y/%m/%d] ---  %H:%M:%S'), e)
         return HttpResponseForbidden()
     except oauth.NotApprovedException, e:
+        log.error("{}: Oauth not approved exception {}").format(
+            timezone.now().strftime('[%Y/%m/%d] ---  %H:%M:%S'), e)
         return HttpResponseRedirect(reverse('auth:logout'))
     except oauth.ProviderException, e:
+        log.error("{}: Oauth provider exception {}").format(
+            timezone.now().strftime('[%Y/%m/%d] ---  %H:%M:%S'), e)
         raise e
 
     if access_token:
+        log.info("{}: Get Access Token {}").format(
+            timezone.now().strftime('[%Y/%m/%d] ---  %H:%M:%S'),
+            access_token)
         user = request.user
         user.is_active = True
         user.save()
         dropbox_profile = Dropbox.objects.get_or_create(user=user)[0]
         dropbox_profile.access_token = access_token
         dropbox_profile.save()
-    return redirect(reverse('notes:main'))
-    # return HttpResponseRedirect()
+        return redirect(reverse('notes:main'))
+
+    log.error("{}: Something going wrong").format(
+        timezone.now().strftime('[%Y/%m/%d] ---  %H:%M:%S'))
+    return redirect(reverse('auth:logout'))
 # ------------------------------------------------------------------
 
 
