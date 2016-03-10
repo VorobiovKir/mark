@@ -30,4 +30,7 @@ urlpatterns = [
 
     url(r'^format_to_date/$', views.format_list_to_date,
         name='format_to_date'),
+
+    url(r'^upload_file/$', views.dropbox_upload_file,
+        name='upload_file'),
 ]

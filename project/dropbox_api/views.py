@@ -59,6 +59,7 @@ def dropbox_auth_finish(request):
         dropbox_profile.access_token = access_token
         dropbox_profile.save()
     return redirect(reverse('notes:main'))
+    # return HttpResponseRedirect()
 # ------------------------------------------------------------------
 
 
@@ -356,9 +357,7 @@ def dropbox_add_or_del_meta_files(request):
 
 
 def format_list_to_date(request):
-    print 'hello'
     params = json.loads(request.body)
-    print params
     notes = params.get('notes')
     new_note = params.get('new_note').get('path')
 
@@ -366,7 +365,6 @@ def format_list_to_date(request):
         custom_funcs.format_date(new_note, notes)
 
     return JsonResponse({'notes': notes})
-
 
 
 def dropbox_upload_file(request):
@@ -410,7 +408,6 @@ def dropbox_upload_file(request):
     # uploader.finish('/bigFile.txt')
 
     return JsonResponse({'res': ''})
-
 
 # def dropbox_create_note(request):
 #     # TEST TEST TEST

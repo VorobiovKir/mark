@@ -1,4 +1,4 @@
-var MainController = function($http) {
+var MainController = function($http, $scope) {
 
     var that = this;
 
@@ -14,7 +14,8 @@ var MainController = function($http) {
             addDelNotes: 'dropbox/add_or_del_meta_files/',
             createEditNote: 'dropbox/create_or_edit_note/',
             format_to_date: 'dropbox/format_to_date/',
-            change_meta_note: 'dropbox/change_meta_note/'
+            change_meta_note: 'dropbox/change_meta_note/',
+            uploadFile: 'dropbox/upload_file/'
         },
 
         getFullPath: function(path) {
@@ -22,9 +23,12 @@ var MainController = function($http) {
         }
     }
 
+    $scope.fileread = ''
+
     this.user = {
         projects: '',
         tags: '',
+        file: '123',
         notes: {
             order: {
                 full_info: '',
@@ -38,7 +42,7 @@ var MainController = function($http) {
             errors: {
                 projects: '',
                 tags: ''
-            }
+            },
         },
         create: {
             text: '',
@@ -107,10 +111,54 @@ var MainController = function($http) {
             }
         }
         $http(req).success(function(data) {
-            // create function who change all angular array notes
+            that.changeMetaAngular(type, path, meta_name);
         });
+    }
 
-        // alert(path + ' ' + type + ' ' + value);
+    this.sendFileAjax = function(path) {
+        var fd = new FormData();
+        fd.append("file", $("input[data-file='file_" + path + "']")[0].files[0]);
+        fd.append("path", path);
+
+        url = that.url.getFullPath('dropbox.uploadFile');
+
+        $http.post(url, fd, {
+            headers: {'Content-Type': undefined },
+            transformRequest: angular.identity
+        }).success(function(data) {
+            alert(data);
+        })
+    }
+
+    this.changeMetaAngular = function(type, path, new_val) {
+        notes_all_info = that.user.notes.order.full_info
+        for (var i=0; i < notes_all_info.length; i++) {
+            if (notes_all_info[i].path === path) {
+                var targetNote = notes_all_info[i],
+                    old_path = targetNote.path.split('/'),
+                    old_name = old_path[old_path.length-1].split('_');
+
+                if (type === 'project') {
+                    var index = 1;
+                    targetNote.project = new_val;
+                } else if (type === 'tag') {
+                    var index = 2;
+                    targetNote.tag = new_val;
+                }
+                old_name[index] = new_val;
+
+                var new_name = old_name.join('_');
+                old_path[old_path.length-1] = new_name;
+
+                var new_path = old_path.join('/');
+                targetNote.path = new_path;
+
+                console.log(that.user.notes.order.form_date);
+                console.log('--------');
+                console.log(that.timeliner.current_list);
+            }
+        }
+        // console.log(that.user.notes.order.full_info);
     }
 
     this.changeDate = function(user_date) {
@@ -156,6 +204,22 @@ var MainController = function($http) {
         }
     }
 
+    this.uploadFile = function() {
+        alert('start');
+        alert($scope.fileread);
+        var formData = new FormData($('#test-form')[0]);
+        var req = {
+            method: 'POST',
+            url: this.url.getFullPath('dropbox.uploadFile'),
+            data: {
+                formData
+            }
+        }
+
+        $http(req).success(function(data) {
+            alert('succ');
+        });
+    }
 
     this.getMetaFiles = function(search_type) {
         var req = {

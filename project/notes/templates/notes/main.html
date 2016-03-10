@@ -88,12 +88,12 @@
 									   	<span class="col-md-3 note-block-date">[[ note.date ]]</span>
 									   	<div class="col-md-3">
 										   	<div class="select-style">
-											   	<select ng-model='note.project' ng-options="option for option in main.user.projects track by option"></select>
+											   	<select ng-model='note.project' ng-change="main.changeMeta(note.path, 'project', note.project)" ng-options="option for option in main.user.projects track by option"></select>
 										   	</div>
 									   	</div>
 									   	<div class="col-md-3">
 										   	<div class="select-style">
-											   	<select ng-model='note.tag' ng-options="option for option in main.user.tags track by option"></select>
+											   	<select ng-model='note.tag' ng-change="main.changeMeta(note.path, 'tag', note.tag)" ng-options="option for option in main.user.tags track by option"></select>
 										   	</div>
 									   	</div>
 									   	<div class="col-md-3">
@@ -120,7 +120,7 @@
 									   	<span class="col-md-3 note-block-date">[[ note.date ]]</span>
 									   	<div class="col-md-3">
 										   	<div class="select-style">
-											   	<select ng-model='note.project' ng-options="option for option in main.user.projects track by option"></select>
+											   	<select ng-model='note.project' ng-change="main.changeMeta(note.path, 'project', note.project)" ng-options="option for option in main.user.projects track by option"></select>
 										   	</div>
 									   	</div>
 									   	<div class="col-md-3">
@@ -129,7 +129,13 @@
 										   	</div>
 									   	</div>
 									   	<div class="col-md-3">
-										   	<button class="btn btn-block insert_btn"><input type="file" id="exampleInputFile" class="hide"/>Insert File</button>
+								   			<!-- <input type="file" name="file" ng-model="main.user.file"> -->
+								   			<form action="" data-file="form_file_[[ note.path ]]" enctype="multipart/form-data">
+								   				<input type="file" name="file" id="file" data-file="file_[[ note.path ]]" />
+								   			</form>
+								   			<input type="submit" ng-click="main.sendFileAjax(note.path)">
+
+										   	<!-- <button class="btn btn-block insert_btn"><input type="file" id="exampleInputFile" class="hide"/>Insert File</button> -->
 									   	</div>
 								   	</div>
 								</div>
