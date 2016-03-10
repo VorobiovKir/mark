@@ -59,7 +59,6 @@ def dropbox_auth_finish(request):
         dropbox_profile.access_token = access_token
         dropbox_profile.save()
     return redirect(reverse('notes:main'))
-    # return HttpResponseRedirect()
 # ------------------------------------------------------------------
 
 
@@ -369,7 +368,7 @@ def format_list_to_date(request):
     return JsonResponse({'notes': notes})
 
 
-<<<<<<< HEAD
+
 def dropbox_upload_file(request):
     # TEST TEST TEST
     admin = User.objects.get(pk=1)
@@ -412,8 +411,7 @@ def dropbox_upload_file(request):
 
     return JsonResponse({'res': ''})
 
-=======
->>>>>>> parent of e4d1dac... add file
+
 # def dropbox_create_note(request):
 #     # TEST TEST TEST
 #     admin = User.objects.get(pk=1)
