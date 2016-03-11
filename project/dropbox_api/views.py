@@ -388,9 +388,8 @@ def format_list_to_date(request):
     params = json.loads(request.body)
     notes = params.get('notes')
     new_note = params.get('new_note').get('path')
-
-    for note in notes:
-        custom_funcs.format_date(new_note, notes)
+# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    notes = custom_funcs.format_date(new_note, notes)
 
     return JsonResponse({'notes': notes})
 

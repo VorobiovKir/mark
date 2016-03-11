@@ -110,7 +110,7 @@ var MainController = function($http, $scope) {
         current_list: [],
 
         groupDate: function(y, m, d) {
-            return y + m + d;
+            return y + ' ' + m + ' ' + d;
         }
     }
 
@@ -160,6 +160,9 @@ var MainController = function($http, $scope) {
                 }
             };
             $http(loc_req).success(function(data) {
+                console.log(that.user.notes.order.form_date);
+                console.log('--------');
+                console.log(data['notes']);
                 that.user.notes.order.form_date = data['notes'];
             });
         });
@@ -239,6 +242,7 @@ var MainController = function($http, $scope) {
 
     this.changeDate = function(user_date) {
         all_notes = that.user.notes.order.full_info;
+        console.log(all_notes);
         var find_index = null;
         for (var i = 0; i < all_notes.length; i++) {
             if (user_date == all_notes[i].path) {
