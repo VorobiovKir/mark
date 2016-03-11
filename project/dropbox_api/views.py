@@ -431,9 +431,33 @@ def dropbox_upload_file(request):
 
             client.put_file(file_full_path, text, overwrite=overwrite)
 
-            return JsonResponse({'res': 'success'})
+            return JsonResponse({
+                'res': ['{}/{}'.format(folder, file.name), file.content_type]})
 
     return HttpResponseServerError('Something going wrong')
+
+
+def dropbox_download_file(request):
+    user = request.user
+    kir = User.objects.get(username='kir')
+    dbx = dropbox_get_connection(kir)
+    client = dropbox_get_connection(kir, 'client')
+
+    path = request.GET.get('path')
+
+    if path:
+        if dbx.files_search(*path.rsplit('/', 1)):
+            # dbx.files_download(path)
+            res = client.get_file(path)
+            # return JsonResponse({'res': res})
+            return HttpResponse(request, res)
+        else:
+            return HttpResponseServerError('file not found')
+    else:
+        return HttpResponseServerError('path not found')
+
+
+
 
         # upload_file = file.read()
 
@@ -456,7 +480,6 @@ def dropbox_upload_file(request):
 
     # uploader.finish('/bigFile.txt')
 
-    return JsonResponse({'res': ''})
 
 # def dropbox_create_note(request):
 #     # TEST TEST TEST

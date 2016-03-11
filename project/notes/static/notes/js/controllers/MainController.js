@@ -15,7 +15,8 @@ var MainController = function($http, $scope) {
             createEditNote: 'dropbox/create_or_edit_note/',
             format_to_date: 'dropbox/format_to_date/',
             change_meta_note: 'dropbox/change_meta_note/',
-            uploadFile: 'dropbox/upload_file/'
+            uploadFile: 'dropbox/upload_file/',
+            downloadFile: 'dropbox/download_file'
         },
 
         getFullPath: function(path) {
@@ -23,12 +24,48 @@ var MainController = function($http, $scope) {
         }
     }
 
-    $scope.fileread = ''
+    this.images = {
+        formats: {
+            'application/vnd.ms-excel': 'excel.png',
+            'application/pdf': 'pdf.png',
+            'application/vnd.ms-powerpoint': 'powerpoint.png',
+            'application/msword': 'word.png',
+            'text': 'text.png',
+            'image': 'any_image_type.png'
+        },
+
+        getImageByFormat: function(contentType) {
+            var content = contentType.split('/')[0];
+            var type = contentType.split('/')[1];
+
+            switch (content) {
+                case 'text':
+                    return 'text.png';
+                case 'image':
+                    return 'any_image_type.png';
+                case 'application':
+                    switch (type) {
+                        case 'vnd.ms-excel':
+                            return 'excel.png';
+                        case 'pdf':
+                            return 'pdf.png';
+                        case 'vnd.ms-powerpoint':
+                            return 'powerpoint.png';
+                        case 'msword':
+                            return 'word.png';
+                        default:
+                            return 'default.png';
+                    }
+                default:
+                    return 'default.png';
+            }
+        }
+    }
 
     this.user = {
         projects: '',
         tags: '',
-        file: '123',
+        file: '',
         notes: {
             order: {
                 full_info: '',
@@ -65,6 +102,19 @@ var MainController = function($http, $scope) {
     this.timeliner = {
         date: '',
         current_list: [],
+    }
+
+    this.downloadFile = function(path) {
+        var req = {
+            method: 'GET',
+            url: that.url.getFullPath('dropbox.downloadFile'),
+            params: {
+                path: path,
+            }
+        }
+        $http(req).success(function() {
+            alert('succ')
+        });
     }
 
     this.createNote = function() {
@@ -127,7 +177,12 @@ var MainController = function($http, $scope) {
             headers: {'Content-Type': undefined },
             transformRequest: angular.identity
         }).success(function(data) {
-
+            var notes = that.user.notes.order.full_info
+            for (var i = 0; i < notes.length; i++) {
+                if (notes[i].path == path) {
+                    notes[i].files.push(data['res'])
+                }
+            }
         })
     }
 
@@ -154,12 +209,8 @@ var MainController = function($http, $scope) {
                 var new_path = old_path.join('/');
                 targetNote.path = new_path;
 
-                console.log(that.user.notes.order.form_date);
-                console.log('--------');
-                console.log(that.timeliner.current_list);
             }
         }
-        // console.log(that.user.notes.order.full_info);
     }
 
     this.selectFile = function(path){
@@ -208,23 +259,6 @@ var MainController = function($http, $scope) {
                 'overflow': 'auto'
             });
         }
-    }
-
-    this.uploadFile = function() {
-        alert('start');
-        alert($scope.fileread);
-        var formData = new FormData($('#test-form')[0]);
-        var req = {
-            method: 'POST',
-            url: this.url.getFullPath('dropbox.uploadFile'),
-            data: {
-                formData
-            }
-        }
-
-        $http(req).success(function(data) {
-            alert('succ');
-        });
     }
 
     this.getMetaFiles = function(search_type) {

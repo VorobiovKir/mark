@@ -33,4 +33,6 @@ urlpatterns = [
 
     url(r'^upload_file/$', views.dropbox_upload_file,
         name='upload_file'),
+    url(r'^download_file/$', views.dropbox_download_file,
+        name='download_file'),
 ]
