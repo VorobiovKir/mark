@@ -52,7 +52,7 @@
 .note-block .note-block-heading .note-block-date {
     display: inline-block;
     line-height: 25px;
-    font-size:18px;
+    font-size:16px;
 }
 
 .note-block .note-block-body {
@@ -75,6 +75,7 @@
     -webkit-appearance: none;
     -moz-appearance: none;
     appearance: none;
+    text-indent: 10px;
 }
 .select-style select:focus {
     outline: none;
@@ -88,6 +89,10 @@
 .select-tag {
     height: 35px;
     width: 20%;
+}
+
+.select-tag select{
+    /* text-indent: 15px; */
 }
 
 .file-icons {
@@ -144,7 +149,7 @@ ul li {
     /*border: 1px solid #c5c5c5;
     color: #c5c5c5;*/
     font-size: 16px;
-    padding: 2px 8px;
+    padding: 3px 8px;
     position: relative;
     margin-right: 10px;
     margin-bottom:5px;

@@ -7,4 +7,10 @@ angular
             $interpolateProvider.startSymbol('[[').endSymbol(']]');
         })
     .controller('MainController', MainController)
-    .controller('PanelController', ['$cookies', PanelController]);
+    .controller('PanelController', ['$cookies', PanelController])
+    .filter('toSec', function($filter) {
+        return function(input) {
+            var result = new Date(input).getTime();
+            return result || input;
+        };
+    });

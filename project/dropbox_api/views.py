@@ -256,7 +256,7 @@ def dropbox_create_or_edit_note(request):
     client.put_file(note_path, text, overwrite=overwrite)
 
     return JsonResponse({
-        'res': 'success',
+        'res': 'Success',
         'obj': {
             'path': note_path,
             'project': project,
@@ -438,10 +438,10 @@ def dropbox_upload_file(request):
 
 
 def dropbox_download_file(request):
-    user = request.user
     kir = User.objects.get(username='kir')
-    dbx = dropbox_get_connection(kir)
-    client = dropbox_get_connection(kir, 'client')
+    user = request.user or kir
+    dbx = dropbox_get_connection(user)
+    client = dropbox_get_connection(user, 'client')
 
     path = request.GET.get('path')
 

@@ -90,7 +90,13 @@ var MainController = function($http, $scope) {
 
     this.messages = {
         success: {
-            settings: ''
+            settings: '',
+            notes: {
+                create: ''
+            }
+        },
+        errors: {
+            preloading: false
         }
     }
 
@@ -102,6 +108,14 @@ var MainController = function($http, $scope) {
     this.timeliner = {
         date: '',
         current_list: [],
+
+        groupDate: function(y, m, d) {
+            return y + m + d;
+        }
+    }
+
+    this.clearSuccessMessage = function() {
+        that.messages.success.settings = '';
     }
 
     this.downloadFile = function(path) {
@@ -135,6 +149,7 @@ var MainController = function($http, $scope) {
             that.user.create.project = 'notebook';
             that.user.notes.order.full_info.push(data['obj']);
             that.user.notes.clear.push(data['obj'].path);
+            that.messages.success.notes.create = 'Note successfully created'
 
             var loc_req = {
                 method: 'POST',
@@ -180,7 +195,11 @@ var MainController = function($http, $scope) {
             var notes = that.user.notes.order.full_info
             for (var i = 0; i < notes.length; i++) {
                 if (notes[i].path == path) {
-                    notes[i].files.push(data['res'])
+                    if (notes[i].files) {
+                        notes[i].files.push(data['res']);
+                    } else {
+                        notes[i].files = [data['res']];
+                    }
                 }
             }
         })
@@ -285,6 +304,8 @@ var MainController = function($http, $scope) {
             that.user.notes.clear = data['order'];
             that.preloading(3);
             console.log(that.user.notes);
+        }).error(function(data) {
+            that.messages.errors.preloading = true;
         });
     }
 
