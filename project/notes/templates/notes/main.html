@@ -217,10 +217,12 @@
 							<li ng-repeat="(year, year_value) in main.user.notes.order.form_date">
 								<span>[[ year ]] &#8212;
 									<ul class="timeliner-month">
-										<li ng-repeat="(month, month_value) in year_value">
+										<li ng-repeat="month in year_value | orderByMonthName">
 											<span class="date-month" onclick="toggleTimeliner(event);">[[ month ]]</span> &#8212;
 											<ul class="timeliner-day">
-												<li ng-repeat="(day, day_value) in month_value"><p class="date" ng-click="main.changeDate(day_value[0])">[[ main.timeliner.groupDate(year, month, day) | toSec | date: 'EEE dd' ]]</p></li>
+												<li ng-repeat="day in year_value[month] | orderByNum">
+													<p class="date" ng-click="main.changeDate(year_value[month][day][0])">[[ main.timeliner.groupDate(year, month, day) | toSec | date: 'EEE dd' ]]</p>
+												</li>
 											</ul>
 										</li>
 									</ul>
