@@ -19,6 +19,11 @@ var MainController = function($http, $scope) {
             downloadFile: 'dropbox/download_file'
         },
 
+        getStaticPath: function(path, file_name) {
+            console.log(this.server + 'static/' + path + file_name);
+            return '/static/' + path + file_name;
+        },
+
         getFullPath: function(path) {
             return this.server + eval('this.' + path);
         }
@@ -307,6 +312,7 @@ var MainController = function($http, $scope) {
             that.user.notes.order.form_date = data['format_result'];
             that.user.notes.clear = data['order'];
             that.preloading(3);
+            $('#search-field').autocomplete({source: that.user.notes.clear});
             console.log(that.user.notes);
         }).error(function(data) {
             that.messages.errors.preloading = true;

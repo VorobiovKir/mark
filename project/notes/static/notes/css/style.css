@@ -257,3 +257,7 @@ ul li {
     opacity: 0;
     filter: alpha(opacity=0);
 }*/
+.search-field{
+    display: inline-block;
+    margin-right: 25px;
+}

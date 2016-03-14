@@ -35,6 +35,9 @@
 				<div class="page-header">
 					<a ng-click="panel.selectTab(1);" href="#" class="main"><img width="80" src="{% static 'main/images/deez_notes_logo.png' %}"></a>
 					<p class="pull-right">
+						<span class="search-field">
+							<input type="text" class="form-control" id="search-field" placeholder="Searching...">
+						</span>
 						<a href="#"><img width="50" src="{% static "main/images/search_icon.png" %}" class="search-btn" alt=""></a>
 						<a ng-click="panel.selectTab(5);" href="#"><img width="50" src="{% static "main/images/settings_icon.png" %}" alt="" class="settings-btn"></a>
 					</p>
@@ -117,6 +120,7 @@
 										<br>
 										<div class="pull-right file-icons">
 											<a href="#" ng-repeat="file in note.files">
+												<!-- <img ngSrc="main.url.getStaticPath('main/images/', main.images.getImageByFormat(file[1]))" ng-click="main.downloadFile(file[0])" data-toggle="tooltip" data-placement="top" title="[[ file[0] ]]" alt="text_file" width="35"> -->
 												<img src="{% static "main/images/" %}[[ main.images.getImageByFormat(file[1]) ]]" ng-click="main.downloadFile(file[0])" data-toggle="tooltip" data-placement="top" title="[[ file[0] ]]" alt="text_file" width="35">
 											</a>
 											<!-- <a href="#" target="_blank"><img width="50" src="{% static "main/images/text.png" %}" data-toggle="tooltip" data-placement="top" title="deez_06:49PM.txt" alt="text_file" /></a>

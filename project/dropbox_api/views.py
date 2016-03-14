@@ -24,25 +24,40 @@ log = logging.getLogger(__name__)
 
 # --------------------- AUTHORIZATION VIEWS ---------------------------
 def get_dropbox_auth_flow(web_app_session):
+    """Get dropbox auth flow
+
+    Addition method for dropbox authorization, get application key, and
+    secret key, session, redirect url
+
+    Return DropboxOAuth2Flow object for dropbox authorization
+    """
     redirect_uri = '{}dropbox/auth_finish/'.format(settings.SITE_PATH)
-    # redirect_uri = reverse_lazy('dropbox:auth_finish')
     return DropboxOAuth2Flow(
         settings.DROPBOX_APP_KEY, settings.DROPBOX_APP_SECRET,
         redirect_uri, web_app_session, "dropbox-auth-csrf-token")
 
 
-# URL handler for /dropbox-auth-start
 def dropbox_auth_start(request):
+    """Dropbox auth session start
+
+    Start session to authorizate in dropbox system
+
+    Returns:
+        redirect to dropbox auth system
+    """
     authorize_url = get_dropbox_auth_flow(request.session).start()
     return HttpResponseRedirect(authorize_url)
 
 
-# URL handler for /dropbox-auth-finish
 def dropbox_auth_finish(request):
+    """Dropbox authorization finish
+
+    Final method who get from dropbox object, with authorization
+    information. In successfully case we get access token
+    """
     try:
         res = get_dropbox_auth_flow(request.session).finish(request.GET)
         access_token, user_id, url_state = res
-        print res
     except oauth.BadRequestException, e:
         log.error("{}: Oauth bad request {}".format(
             timezone.now().strftime('[%Y/%m/%d] ---  %H:%M:%S'), e))
@@ -51,8 +66,6 @@ def dropbox_auth_finish(request):
         log.error("{}: Bad state exception {}".format(
             timezone.now().strftime('[%Y/%m/%d] ---  %H:%M:%S'), e))
         return redirect(reverse('dropbox:auth_start'))
-        # return HttpResponseRedirect(
-        #     '{}dropbox/auth_start/'.format(settings.SITE_PATH))
     except oauth.CsrfException, e:
         log.error("{}: Oauth Csrf error {}".format(
             timezone.now().strftime('[%Y/%m/%d] ---  %H:%M:%S'), e))
@@ -86,6 +99,19 @@ def dropbox_auth_finish(request):
 
 # --------------------- GET API VIEWS ---------------------------
 def dropbox_get_connection(user, type_connection='dbx'):
+    """Dropbox get connection
+
+    Method return dropbox api object
+
+    Arguments:
+        user {object} -- current User
+
+    Keyword Arguments:
+        type_connection {str} -- quering api type (default: {'dbx'})
+
+    Returns:
+        [object] -- dropbox api object
+    """
     access_token = dropbox_get_access_token(user)
 
     if type_connection == 'dbx':
@@ -95,11 +121,25 @@ def dropbox_get_connection(user, type_connection='dbx'):
 
 
 def dropbox_get_access_token(user):
+    """Dropbox get access token
+
+    Method return access token, if User doesn't have access token,
+    method change User active status to False and doing logout User from
+    auth system
+
+    Arguments:
+        user {object} -- current User
+
+    Returns:
+        [string] -- access token
+    """
     try:
         access_token = \
             User.objects.get(pk=user.pk).dropbox.access_token
     except:
-        pass # doing something if hasn't access token
+        user.is_active = False
+        user.save()
+        return HttpResponseRedirect(reverse('auth:logout'))
 
     return access_token
 # -----------------------------------------------------------
@@ -107,8 +147,6 @@ def dropbox_get_access_token(user):
 
 # --------------------- GET NOTES ---------------------------
 def dropbox_get_notes_version_search(request):
-    # TEST TEST TEST
-    # admin = User.objects.get(pk=1)
     user = request.user
     dbx = dropbox_get_connection(user)
     client = dropbox_get_connection(user, 'client')
