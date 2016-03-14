@@ -546,6 +546,33 @@ def dropbox_download_file(request):
         return HttpResponseServerError('path not found')
 
 
+def dropbox_delete_note(request):
+    user = request.user
+    client = dropbox_get_connection(user, 'client')
+
+    params = json.loads(request.body)
+    path = params.get('path')
+    file_path, file_name = path.rsplit('/', 1)
+    files_path = '.meta/files{}/files_{}'.format(file_path, file_name[5:])
+
+    if (client.search(*files_path.rsplit('/', 1))):
+        list_files = client.get_file(files_path)
+        files = json.loads(list_files.read())
+
+        for file in files:
+            try:
+                client.file_delete(file[0])
+            except:
+                pass
+        client.file_delete(files_path)
+
+    try:
+        client.file_delete(path)
+    except:
+        return HttpResponseServerError('file is not find')
+
+    return JsonResponse({'res': 'success'})
+
 
 
         # upload_file = file.read()

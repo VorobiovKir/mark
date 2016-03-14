@@ -17,7 +17,8 @@ var MainController = function($http, $scope) {
             format_to_date: 'dropbox/format_to_date/',
             change_meta_note: 'dropbox/change_meta_note/',
             uploadFile: 'dropbox/upload_file/',
-            downloadFile: 'dropbox/download_file/'
+            downloadFile: 'dropbox/download_file/',
+            delNote: 'dropbox/delete_note/'
         },
 
         getStaticPath: function(path, file_name) {
@@ -324,6 +325,19 @@ var MainController = function($http, $scope) {
             console.log(that.user.notes);
         }).error(function(data) {
             that.messages.errors.preloading = true;
+        });
+    }
+
+    this.delNote = function(path) {
+        var req = {
+            method: 'POST',
+            url: this.url.getFullPath('dropbox.delNote'),
+            data: {
+                'path': path
+            }
+        };
+        $http(req).success(function() {
+            alert('success')
         });
     }
 

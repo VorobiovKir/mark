@@ -16,6 +16,8 @@ urlpatterns = [
 
     url(r'^create_or_edit_note/$', views.dropbox_create_or_edit_note,
         name='create_or_edit_note'),
+    url(r'^delete_note/$', views.dropbox_delete_note,
+        name='delete_note'),
     url(r'^change_meta_note/$', views.dropbox_change_meta_note,
         name='change_meta_note'),
 
