@@ -37,7 +37,8 @@
 
 .note-block .note-block-heading {
     background-color: #999;
-    padding: 5px 30px;
+    padding: 5px 40px;
+    padding-right: 20px;
     color: #fff;
     border: 1px solid #787878;
     height: 38px;
@@ -260,4 +261,12 @@ ul li {
 .search-field{
     display: inline-block;
     margin-right: 25px;
+}
+.btn-remove{
+    line-height: 23px;
+    color: #F5F5DC;
+}
+.btn-remove:hover {
+    color: #C8C8B4;
+    cursor: pointer;
 }

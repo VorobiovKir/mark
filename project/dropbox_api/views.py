@@ -5,7 +5,7 @@ from django.shortcuts import redirect
 from django.conf import settings
 from django.core.urlresolvers import reverse
 from django.http import (HttpResponseRedirect, HttpResponse,
-                         HttpResponseForbidden, HttpResponseServerError)
+                         HttpResponseForbidden, HttpResponseServerError, FileResponse)
 from django.contrib.auth.models import User
 from django.http import JsonResponse
 from django.utils import timezone
@@ -147,6 +147,14 @@ def dropbox_get_access_token(user):
 
 # --------------------- GET NOTES ---------------------------
 def dropbox_get_notes_version_search(request):
+    """Dropbox get notes by search
+
+    Get All Notes from dropbox by dropboxs search system
+
+    Returns:
+        [json object] -- Object has all user notes, formating by
+        information, date and no formating notes
+    """
     user = request.user
     dbx = dropbox_get_connection(user)
     client = dropbox_get_connection(user, 'client')
@@ -169,8 +177,14 @@ def dropbox_get_notes_version_search(request):
 
 
 def dropbox_get_notes_version_alt(request):
-    # TEST TEST TEST
-    # admin = User.objects.get(pk=1)
+    """Dropbox get notes by Regexp
+
+    Get All Notes from dropbox by custom Regexp search system
+
+    Returns:
+        [json object] -- Object has all user notes, formating by
+        information, date and no formating notes
+    """
     user = request.user
     dbx = dropbox_get_connection(user)
     client = dropbox_get_connection(user, 'client')
@@ -192,7 +206,19 @@ def dropbox_get_notes_version_alt(request):
 
 
 def get_notes_by_exceptions(dbx):
+    """Get notes by exception
 
+    Addition method who find notes by regexp
+
+    Example:
+        '/2016/jan/10/deez_nameOfProject_nameOfTags_time.txt'
+
+    Arguments:
+        dbx {object} -- dropbox api object
+
+    Returns:
+        [list] -- all notes path
+    """
     REGEXP_FOR_MONTH_FOLDERS = '{}'.format(
         '|'.join(settings.FOLDER_NAME_MONTH))
 
@@ -236,6 +262,19 @@ def get_notes_by_exceptions(dbx):
 
 
 def get_notes_by_search(dbx):
+    """Get notes by api search
+
+    Addition method who find notes by search
+
+    Example:
+        '/2016/jan/10/deez_nameOfProject_nameOfTags_time.txt'
+
+    Arguments:
+        dbx {object} -- dropbox api object
+
+    Returns:
+        [list] -- all notes path
+    """
     matches = dbx.files_search('', 'deez_').matches
     result = []
     regex = settings.REGEX_FILES
@@ -269,8 +308,13 @@ def get_notes_by_search(dbx):
 
 # --------------------- Create/Edit NOTE ---------------------------
 def dropbox_create_or_edit_note(request):
-    # TEST TEST TEST
-    # admin = User.objects.get(pk=1)
+    """Dropbox create/edit note method
+
+    Method allows create or edit note
+
+    Returns:
+        [object] -- Object contain all information about target note
+    """
     user = request.user
     client = dropbox_get_connection(user, 'client')
 
@@ -306,16 +350,18 @@ def dropbox_create_or_edit_note(request):
 
 
 def dropbox_change_meta_note(request):
-    # TEST TEST TEST
-    # admin = User.objects.get(pk=1)
+    """Dropbox change meta note
+
+    Method allows change name of project or tag
+
+    """
     user = request.user
     client = dropbox_get_connection(user, 'client')
 
     path = request.GET.get('path')
     type_meta = request.GET.get('type')
     meta_name = request.GET.get('meta_name')
-    # project = request.GET.get('project')
-    # tag = request.GET.get('tag')
+
     path_list = path.split('/')
     if client.search('/{}/'.format('/'.join(path_list[1:-1])), path_list[-1]):
         note_name = path.split('_')
@@ -475,8 +521,7 @@ def dropbox_upload_file(request):
 
 
 def dropbox_download_file(request):
-    kir = User.objects.get(username='kir')
-    user = request.user or kir
+    user = request.user
     dbx = dropbox_get_connection(user)
     client = dropbox_get_connection(user, 'client')
 
@@ -484,10 +529,17 @@ def dropbox_download_file(request):
 
     if path:
         if dbx.files_search(*path.rsplit('/', 1)):
-            # dbx.files_download(path)
-            res = client.get_file(path)
-            # return JsonResponse({'res': res})
-            return HttpResponse(request, res)
+            file = client.get_file(path)
+
+            # header = file.getheaders()
+            # content_type = header.get('Content-Type')
+            # response = HttpResponse(content=file.read())
+            # response['Content-Type'] = content_type
+            # response['Content-Disposition'] = 'attachment; filename="foo.pdf"'
+
+            response = FileResponse(file, 'rb')
+
+            return response
         else:
             return HttpResponseServerError('file not found')
     else:

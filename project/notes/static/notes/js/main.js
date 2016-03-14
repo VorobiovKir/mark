@@ -6,6 +6,12 @@ angular
             $httpProvider.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
             $interpolateProvider.startSymbol('[[').endSymbol(']]');
         })
+        .config( [
+            '$compileProvider',
+            function($compileProvider) {
+                $compileProvider.aHrefSanitizationWhitelist(/^\s*(https?|ftp|mailto|chrome-extension):/);
+            }
+        ])
     .controller('MainController', MainController)
     .controller('PanelController', ['$cookies', PanelController])
     .filter('toSec', function($filter) {

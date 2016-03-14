@@ -19,6 +19,16 @@
 {% endblock local_js %}
 
 {% block content %}
+<!-- <div id="smoky">
+	<div class="row" ng-show="main.isLoadFiles">
+		<div class="col-xs-4 col-xs-offset-4">
+			<p class="text-center">Loading...
+				<button ng-click="main.loadFile()">Toggle</button>
+				<img class="text-center" src="{% static "main/images/preloader.gif" %}" alt="">
+			</p>
+		</div>
+	</div>
+</div> -->
 <div ng-app='MainApp' ng-cloak>
 	<div ng-controller="MainController as main">
 		<div class="row" ng-show="!main.isPreload">
@@ -49,6 +59,7 @@
 
 					<div class="container main-container col-xs-8 col-xs-offset-2">
 						<h1 class="text-center">Hello, {{ request.user.username|title }}!</h1>
+						<p><a target="_blank" href="http://127.0.0.1:8000/dropbox/download_file/?path=/2015/jan/09/bash_cheat_sheet.pdf">download file</a></p>
 						<br/>
 						<div ng-if="panel.isSelected(3)">
 							<div class="select-style select-tag">
@@ -94,24 +105,51 @@
 							</div>
 							<div ng-show="main.filtered(panel.tab, note)" class="note-block" ng-repeat="note in main.user.notes.order.full_info">
 								<div class="note-block-heading">
-								   	<div class="row">
-									   	<span class="col-md-3 note-block-date">[[ note.date | toSec | date: 'EEE, MMM dd, yyyy' ]]</span>
-									   	<div class="col-md-3">
-										   	<div class="select-style">
-											   	<select ng-model='note.project' ng-change="main.changeMeta(note.path, 'project', note.project)" ng-options="option for option in main.user.projects track by option"></select>
+									<div class="row">
+										<div class="col-md-11">
+										   	<div class="row">
+											   	<span class="col-md-3 note-block-date">[[ note.date | toSec | date: 'EEE, MMM dd, yyyy' ]]</span>
+											   	<div class="col-md-3">
+												   	<div class="select-style">
+													   	<select ng-model='note.project' ng-change="main.changeMeta(note.path, 'project', note.project)" ng-options="option for option in main.user.projects track by option"></select>
+												   	</div>
+											   	</div>
+											   	<div class="col-md-3">
+												   	<div class="select-style">
+													   	<select ng-model='note.tag' ng-change="main.changeMeta(note.path, 'tag', note.tag)" ng-options="option for option in main.user.tags track by option"></select>
+												   	</div>
+											   	</div>
+											   	<div class="col-md-3">
+											   		<form data="form_file_[[ note.path ]]" enctype="multipart/form-data">
+											   			<input type="file" style="display:none" name="file" data-file="file_[[ note.path ]]" onchange="angular.element(this).scope().sendFileAjax()" />
+											   		</form>
+											   		<button class="btn btn-block insert_btn" ng-click="main.selectFile(note.path)">Insert File</button>
+											   	</div>
 										   	</div>
-									   	</div>
-									   	<div class="col-md-3">
-										   	<div class="select-style">
-											   	<select ng-model='note.tag' ng-change="main.changeMeta(note.path, 'tag', note.tag)" ng-options="option for option in main.user.tags track by option"></select>
-										   	</div>
-									   	</div>
-									   	<div class="col-md-3">
-									   		<form data="form_file_[[ note.path ]]" enctype="multipart/form-data">
-									   			<input type="file" style="display:none" name="file" data-file="file_[[ note.path ]]" onchange="angular.element(this).scope().sendFileAjax()" />
-									   		</form>
-									   		<button class="btn btn-block insert_btn" ng-click="main.selectFile(note.path)">Insert File</button>
-									   	</div>
+										</div>
+										<div class="col-md-1">
+											<span class="pull-right glyphicon glyphicon-remove btn-remove" data-toggle="modal" data-target="#remove-modal-[[ $index ]]"></span>
+
+											<div class="modal fade" id="remove-modal-[[ $index ]]" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+												<div class="modal-dialog" role="document">
+													<div class="modal-content">
+														<div class="modal-header">
+															<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+															<h4 class="modal-title" id="myModalLabel">Modal title</h4>
+														</div>
+														<div class="modal-body">
+														...
+														</div>
+														<div class="modal-footer">
+															<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+															<button type="button" class="btn btn-primary">Save changes</button>
+														</div>
+													</div>
+												</div>
+											</div>
+
+
+										</div>
 								   	</div>
 								</div>
 								<div class="note-block-body">
@@ -119,9 +157,9 @@
 								   <div class="row">
 										<br>
 										<div class="pull-right file-icons">
-											<a href="#" ng-repeat="file in note.files">
+											<a ng-href="[[main.url.getFileDownloadPath(file[0])]]" target="_blank" ng-repeat="file in note.files">
 												<!-- <img ngSrc="main.url.getStaticPath('main/images/', main.images.getImageByFormat(file[1]))" ng-click="main.downloadFile(file[0])" data-toggle="tooltip" data-placement="top" title="[[ file[0] ]]" alt="text_file" width="35"> -->
-												<img src="{% static "main/images/" %}[[ main.images.getImageByFormat(file[1]) ]]" ng-click="main.downloadFile(file[0])" data-toggle="tooltip" data-placement="top" title="[[ file[0] ]]" alt="text_file" width="35">
+												<img src="{% static "main/images/" %}[[ main.images.getImageByFormat(file[1]) ]]"  data-toggle="tooltip" data-placement="top" title="[[ file[0] ]]" alt="text_file" width="35">
 											</a>
 											<!-- <a href="#" target="_blank"><img width="50" src="{% static "main/images/text.png" %}" data-toggle="tooltip" data-placement="top" title="deez_06:49PM.txt" alt="text_file" /></a>
 											<a href="#"><img width="50" src="{% static "main/images/pdf.png" %}" data-toggle="tooltip" data-placement="top" title="some_name.pdf" alt="pdf_file" /></a> -->
