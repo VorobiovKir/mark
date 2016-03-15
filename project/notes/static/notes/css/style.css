@@ -262,15 +262,24 @@ ul li {
     display: inline-block;
     margin-right: 25px;
 }
-.btn-remove{
+.btn-remove, .btn-edit{
     line-height: 23px;
     color: #F5F5DC;
+    margin-right: 5px;
 }
-.btn-remove:hover {
+.btn-remove:hover, .btn-edit:hover{
     color: #C8C8B4;
     cursor: pointer;
 }
 
 .modal{
     color: #000;
+}
+
+.modal-remove .modal-header{
+    background-color: #FF4500;
+}
+
+.modal-edit .modal-header{
+    background-color: #31b0d5;
 }

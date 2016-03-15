@@ -37,7 +37,7 @@
 				<div id="progressbar"></div>
 			</div>
 			<div ng-show="main.messages.errors.preloading" id="progress-block" class="col-xs-4 col-xs-offset-4">
-				<p class="text-center">Something going wrong :(</p>
+				<p class="text-center">Something going wrong, please reload the page :(</p>
 			</div>
 		</div>
 		<div id="load-screen">
@@ -127,9 +127,12 @@
 										   	</div>
 										</div>
 										<div class="col-md-1">
-											<span class="pull-right glyphicon glyphicon-remove btn-remove" data-toggle="modal" data-target="#remove-modal-[[ $index ]]"></span>
+											<div class="row pull-right">
+												<span class="glyphicon glyphicon-pencil btn-edit" data-toggle="modal" data-target="#edit-modal-[[ $index ]]"></span>
+												<span class="glyphicon glyphicon-remove btn-remove" data-toggle="modal" data-target="#remove-modal-[[ $index ]]"></span>
+											</div>
 
-											<div class="modal fade" id="remove-modal-[[ $index ]]" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+											<div class="modal modal-remove fade" id="remove-modal-[[ $index ]]" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
 												<div class="modal-dialog" role="document">
 													<div class="modal-content">
 														<div class="modal-header">
@@ -141,12 +144,29 @@
 														</div>
 														<div class="modal-footer">
 															<button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
-															<button type="button" class="btn btn-primary" data-dismiss="modal" ng-click="main.delNote(note.path)">Remove note</button>
+															<button type="button" class="btn btn-danger" data-dismiss="modal" ng-click="main.delNote(note.path)">Remove note</button>
 														</div>
 													</div>
 												</div>
 											</div>
 
+											<div class="modal modal-edit fade" id="edit-modal-[[ $index ]]" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+												<div class="modal-dialog" role="document">
+													<div class="modal-content">
+														<div class="modal-header">
+															<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+															<h4 class="modal-title" id="myModalLabel">Edit note</h4>
+														</div>
+														<div class="modal-body">
+															<textarea class="form-control" id="note-edit-text-[[ $index ]]" rows="3">[[ note.text ]]</textarea>
+														</div>
+														<div class="modal-footer">
+															<button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+															<button type="button" class="btn btn-info" data-dismiss="modal" ng-click="main.editNote($index, note.path)">Edit note</button>
+														</div>
+													</div>
+												</div>
+											</div>
 
 										</div>
 								   	</div>
@@ -171,29 +191,69 @@
 							<div class="note-block" ng-repeat="note in main.timeliner.current_list">
 								<div class="note-block-heading">
 								   	<div class="row">
-									   	<span class="col-md-3 note-block-date">[[ note.date | toSec | date: 'EEE, MMM dd, yyyy' ]]</span>
-									   	<div class="col-md-3">
-										   	<div class="select-style">
-											   	<select ng-model='note.project' ng-change="main.changeMeta(note.path, 'project', note.project)" ng-options="option for option in main.user.projects track by option"></select>
+										<div class="col-md-11">
+										   	<div class="row">
+											   	<span class="col-md-3 note-block-date">[[ note.date | toSec | date: 'EEE, MMM dd, yyyy' ]]</span>
+											   	<div class="col-md-3">
+												   	<div class="select-style">
+													   	<select ng-model='note.project' ng-change="main.changeMeta(note.path, 'project', note.project)" ng-options="option for option in main.user.projects track by option"></select>
+												   	</div>
+											   	</div>
+											   	<div class="col-md-3">
+												   	<div class="select-style">
+													   	<select ng-model='note.tag' ng-change="main.changeMeta(note.path, 'tag', note.tag)" ng-options="option for option in main.user.tags track by option"></select>
+												   	</div>
+											   	</div>
+											   	<div class="col-md-3">
+											   		<form data="form_file_[[ note.path ]]" enctype="multipart/form-data">
+											   			<input type="file" style="display:none" name="file" data-file="file_[[ note.path ]]" onchange="angular.element(this).scope().sendFileAjax()" />
+											   		</form>
+											   		<button class="btn btn-block insert_btn" ng-click="main.selectFile(note.path)">Insert File</button>
+											   	</div>
 										   	</div>
-									   	</div>
-									   	<div class="col-md-3">
-										   	<div class="select-style">
-											   	<select ng-model='note.tag' ng-change="main.changeMeta(note.path, 'tag', note.tag)" ng-options="option for option in main.user.tags track by option"></select>
-										   	</div>
-									   	</div>
-									   	<div class="col-md-3">
-								   			<!-- <input type="file" name="file" ng-model="main.user.file"> -->
-								   			<!-- <form action="" data-file="form_file_[[ note.path ]]" enctype="multipart/form-data">
-								   				<input type="file" name="file" id="file" data-file="file_[[ note.path ]]" ng-change="main.sendFileAjax(note.path)" />
-								   			</form>
-								   			<input type="submit" ng-click="main.sendFileAjax(note.path)"> -->
-										   	<!-- <button class="btn btn-block insert_btn"><input type="file" id="exampleInputFile" class="hide"/>Insert File</button> -->
-											<form data="form_file_[[ note.path ]]" enctype="multipart/form-data">
-												<input type="file" style="display:none" name="file" data-file="file_[[ note.path ]]" onchange="angular.element(this).scope().sendFileAjax()" />
-											</form>
-											<button class="btn btn-block insert_btn" ng-click="main.selectFile(note.path)">Insert File</button>
-									   	</div>
+										</div>
+										<div class="col-md-1">
+											<div class="row pull-right">
+												<span class="glyphicon glyphicon-pencil btn-edit" data-toggle="modal" data-target="#edit-modal-[[ $index ]]"></span>
+												<span class="glyphicon glyphicon-remove btn-remove" data-toggle="modal" data-target="#remove-modal-[[ $index ]]"></span>
+											</div>
+
+											<div class="modal modal-remove fade" id="remove-modal-[[ $index ]]" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+												<div class="modal-dialog" role="document">
+													<div class="modal-content">
+														<div class="modal-header">
+															<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+															<h4 class="modal-title" id="myModalLabel">Remove note</h4>
+														</div>
+														<div class="modal-body">
+															<p class="modal-text">If you remove this note You also remove all binding files. Are you sure that you want delete this note?</p>
+														</div>
+														<div class="modal-footer">
+															<button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+															<button type="button" class="btn btn-danger" data-dismiss="modal" ng-click="main.delNote(note.path)">Remove note</button>
+														</div>
+													</div>
+												</div>
+											</div>
+
+											<div class="modal modal-edit fade" id="edit-modal-[[ $index ]]" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+												<div class="modal-dialog" role="document">
+													<div class="modal-content">
+														<div class="modal-header">
+															<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+															<h4 class="modal-title" id="myModalLabel">Edit note</h4>
+														</div>
+														<div class="modal-body">
+															<textarea class="form-control" id="note-edit-text-[[ $index ]]" rows="3">[[ note.text ]]</textarea>
+														</div>
+														<div class="modal-footer">
+															<button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+															<button type="button" class="btn btn-info" data-dismiss="modal" ng-click="main.editNote($index, note.path)">Edit note</button>
+														</div>
+													</div>
+												</div>
+											</div>
+										</div>
 								   	</div>
 								</div>
 								<div class="note-block-body">

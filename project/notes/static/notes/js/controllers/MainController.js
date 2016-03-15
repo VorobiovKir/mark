@@ -96,6 +96,9 @@ var MainController = function($http, $scope) {
             text: '',
             tag: 'tag',
             project: 'notebook'
+        },
+        edit: {
+            text: '',
         }
     }
 
@@ -177,6 +180,30 @@ var MainController = function($http, $scope) {
                 console.log(data['notes']);
                 that.user.notes.order.form_date = data['notes'];
             });
+        });
+    }
+
+    this.editNote = function(index, note_path) {
+        var new_text = $('#note-edit-text-' + index).val();
+        var req = {
+            method: 'POST',
+            url: that.url.getFullPath('dropbox.createEditNote'),
+            data: {
+                'text': new_text,
+                'action': 'edit',
+                'path': note_path
+            }
+        };
+
+        $http(req).success(function() {
+            var all_notes = that.user.notes.order.full_info;
+            for (var i = 0; i < all_notes.length; i++) {
+                if (all_notes[i].path == note_path) {
+                    alert('suc');
+                    all_notes[i].text = new_text;
+                    break;
+                }
+            }
         });
     }
 
@@ -337,7 +364,52 @@ var MainController = function($http, $scope) {
             }
         };
         $http(req).success(function() {
-            alert('success')
+            // Remove element from clear array
+            var all_notes_clear = that.user.notes.clear;
+            for (var i = 0; i < all_notes_clear.length; i++) {
+                if (all_notes_clear[i] == path) {
+                    all_notes_clear.splice(i, 1);
+                }
+            }
+
+            // Remove element from full info array
+            var all_notes_full_info = that.user.notes.order.full_info;
+            for (var i = 0; i < all_notes_full_info.length; i++) {
+                if (all_notes_full_info[i].path == path) {
+                    all_notes_full_info.splice(i, 1);
+                }
+            }
+
+            // Remove element from form date array
+            var all_notes_form_date = that.user.notes.order.form_date;
+            list_path = path.split('/');
+            var year = list_path[1],
+                month = list_path[2],
+                day = list_path[3];
+
+            if (all_notes_form_date[year][month][day].length == 1) {
+                if (all_notes_form_date[year][month].length == 1) {
+                    if (all_notes_form_date[year].length == 1) {
+                        delete all_notes_form_date[year];
+                    } else {
+                        delete all_notes_form_date[year][month];
+                    }
+                } else {
+                    delete all_notes_form_date[year][month][day];
+                }
+            } else {
+                var index = all_notes_form_date[year][month][day].indexOf(path);
+                all_notes_form_date[year][month][day].splice(index, 1);
+            }
+
+            // Remove element from current list
+            var all_notes_current_list = that.timeliner.current_list;
+            for (var i = 0; i < all_notes_current_list.length; i++) {
+                if (all_notes_current_list[i].path == path) {
+                    all_notes_current_list.splice(i, 1);
+                }
+            }
+
         });
     }
 
