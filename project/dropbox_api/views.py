@@ -332,6 +332,12 @@ def dropbox_create_or_edit_note(request):
             timezone.now().strftime(
                 '/%Y/%b/%d/deez_{}_{}_%I:%M%p.txt').format(project, tag)
 
+        i = 1
+        first_note_path = note_path
+        while client.search(*note_path.rsplit('/', 1)):
+            note_path = '{}({}).txt'.format(first_note_path[:-4], i)
+            i += 1
+
     if not note_path:
         return HttpResponseServerError('Bad request')
 
@@ -492,6 +498,13 @@ def dropbox_upload_file(request):
 
     if file:
         file_id = client.upload_chunk(file)
+
+        i = 1
+        first_file_name = file.name
+        while client.search(folder, file.name):
+            file.name = '({}){}'.format(i, first_file_name)
+            i += 1
+
         res = client.commit_chunked_upload(
             'dropbox{}/{}'.format(folder, file.name), file_id[1])
 
