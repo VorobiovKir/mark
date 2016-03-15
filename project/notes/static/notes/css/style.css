@@ -1,6 +1,10 @@
 @import url(https://fonts.googleapis.com/css?family=Roboto);
 @import url(https://fonts.googleapis.com/css?family=Open+Sans:400,300,600,700&subset=latin,cyrillic);
 
+[ng\:cloak], [ng-cloak], [data-ng-cloak], [x-ng-cloak], .ng-cloak, .x-ng-cloak {
+  display: none !important;
+}
+
 .main-container {
     font-family: Roboto;
     font-size: 16px;
@@ -282,4 +286,19 @@ ul li {
 
 .modal-edit .modal-header{
     background-color: #31b0d5;
+}
+
+.smoky-loading {
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(255, 255, 255, 0.9);
+    z-index: 9999;
+}
+
+.smoky-loading .loading{
+    margin-top: 300px;
+}
+.btn-logout .glyphicon{
+    margin-right: 7px;
 }

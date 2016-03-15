@@ -18,17 +18,14 @@ from django.conf.urls import include
 from django.conf.urls import url
 from django.conf.urls.static import static
 from django.contrib import admin
-from django.views.generic import TemplateView
 
-# from authorization.views import WelcomeView
+from authorization.views import WelcomeView
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^auth/', include('authorization.urls', namespace='auth')),
     url(r'^dropbox/', include('dropbox_api.urls', namespace='dropbox')),
-    url(r'^welcome/',
-        TemplateView.as_view(template_name='authorization/welcome.html'),
-        name='welcome'),
+    url(r'^welcome/', WelcomeView.as_view(), name='welcome'),
     url(r'^', include('notes.urls', namespace='notes')),
 ]
 

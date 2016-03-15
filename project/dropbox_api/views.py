@@ -342,7 +342,7 @@ def dropbox_create_or_edit_note(request):
         return HttpResponseServerError('Bad request')
 
     client.put_file(note_path, text, overwrite=overwrite)
-    print note_path
+
     return JsonResponse({
         'res': 'Success',
         'obj': {

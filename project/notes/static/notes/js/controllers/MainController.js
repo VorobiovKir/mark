@@ -3,7 +3,7 @@ var MainController = function($http, $scope) {
     var that = this;
 
     this.isPreload = false;
-    // this.isLoadFiles = true ;
+    this.isLoadFiles = false;
     this.countPreload = 0;
 
     this.url = {
@@ -19,6 +19,9 @@ var MainController = function($http, $scope) {
             uploadFile: 'dropbox/upload_file/',
             downloadFile: 'dropbox/download_file/',
             delNote: 'dropbox/delete_note/'
+        },
+        auth: {
+            logout: 'auth/logout/'
         },
 
         getStaticPath: function(path, file_name) {
@@ -164,26 +167,49 @@ var MainController = function($http, $scope) {
             that.user.create.project = 'notebook';
             that.user.notes.order.full_info.push(data['obj']);
             that.user.notes.clear.push(data['obj'].path);
+            // that.user.notes.order.form_date
+            var form_date = that.user.notes.order.form_date;
+
+            date_list = data['obj']['date'].split('/');
+            var year = date_list[1],
+                month = date_list[2].toLowerCase(),
+                day = date_list[3];
+
+            if (form_date.hasOwnProperty(year)) {
+                if (form_date[year].hasOwnProperty(month)) {
+                    if (form_date[year][month].hasOwnProperty(day)) {
+                        form_date[year][month][day].push(data['obj'].path);
+                    } else {
+                        form_date[year][month][day] = [data['obj'].path];
+                    }
+                } else {
+                    form_date[year][month] = {};
+                    form_date[year][month][day] = [data['obj'].path];
+                }
+            } else {
+                form_date[year] = {};
+                form_date[year][month] = {};
+                form_date[year][month][day] = [data['obj'].path];
+            }
+            that.timeliner.current_list.push(data['obj']);
             that.messages.success.notes.create = 'Note successfully created'
 
-            var loc_req = {
-                method: 'POST',
-                url: that.url.getFullPath('dropbox.format_to_date'),
-                data: {
-                    new_note: data['obj'],
-                    notes: that.user.notes.order.form_date
-                }
-            };
-            $http(loc_req).success(function(data) {
-                console.log(that.user.notes.order.form_date);
-                console.log('--------');
-                console.log(data['notes']);
-                that.user.notes.order.form_date = data['notes'];
-            });
+            // var loc_req = {
+            //     method: 'POST',
+            //     url: that.url.getFullPath('dropbox.format_to_date'),
+            //     data: {
+            //         new_note: data['obj'],
+            //         notes: that.user.notes.order.form_date
+            //     }
+            // };
+            // $http(loc_req).success(function(data) {
+            //     // that.user.notes.order.form_date = data['notes'];
+            // });
         });
     }
 
     this.editNote = function(index, note_path) {
+        that.isLoadFiles = true;
         var new_text = $('#note-edit-text-' + index).val();
         var req = {
             method: 'POST',
@@ -196,14 +222,16 @@ var MainController = function($http, $scope) {
         };
 
         $http(req).success(function() {
+            that.isLoadFiles = false;
             var all_notes = that.user.notes.order.full_info;
             for (var i = 0; i < all_notes.length; i++) {
                 if (all_notes[i].path == note_path) {
-                    alert('suc');
                     all_notes[i].text = new_text;
                     break;
                 }
             }
+        }).error(function() {
+            that.isLoadFiles = false;
         });
     }
 
@@ -223,6 +251,7 @@ var MainController = function($http, $scope) {
     }
 
     $scope.sendFileAjax = function() {
+        that.isLoadFiles = true;
         var path = this.note.path;
         var fd = new FormData();
         fd.append("file", $("input[data-file='file_" + path + "']")[0].files[0]);
@@ -233,18 +262,23 @@ var MainController = function($http, $scope) {
         $http.post(url, fd, {
             headers: {'Content-Type': undefined },
             transformRequest: angular.identity
-        }).success(function(data) {
-            var notes = that.user.notes.order.full_info
-            for (var i = 0; i < notes.length; i++) {
-                if (notes[i].path == path) {
-                    if (notes[i].files) {
-                        notes[i].files.push(data['res']);
-                    } else {
-                        notes[i].files = [data['res']];
+        })
+            .success(function(data) {
+                var notes = that.user.notes.order.full_info
+                for (var i = 0; i < notes.length; i++) {
+                    if (notes[i].path == path) {
+                        if (notes[i].files) {
+                            notes[i].files.push(data['res']);
+                        } else {
+                            notes[i].files = [data['res']];
+                        }
                     }
                 }
-            }
-        })
+                that.isLoadFiles = false;
+            })
+            .error(function() {
+                that.isLoadFiles = false;
+            });
     }
 
     this.changeMetaAngular = function(type, path, new_val) {
@@ -356,6 +390,8 @@ var MainController = function($http, $scope) {
     }
 
     this.delNote = function(path) {
+        that.isLoadFiles = true;
+
         var req = {
             method: 'POST',
             url: this.url.getFullPath('dropbox.delNote'),
@@ -363,53 +399,66 @@ var MainController = function($http, $scope) {
                 'path': path
             }
         };
-        $http(req).success(function() {
-            // Remove element from clear array
-            var all_notes_clear = that.user.notes.clear;
-            for (var i = 0; i < all_notes_clear.length; i++) {
-                if (all_notes_clear[i] == path) {
-                    all_notes_clear.splice(i, 1);
+
+        $http(req)
+            .success(function() {
+                // Remove element from clear array
+                var all_notes_clear = that.user.notes.clear;
+                for (var i = 0; i < all_notes_clear.length; i++) {
+                    if (all_notes_clear[i] == path) {
+                        all_notes_clear.splice(i, 1);
+                    }
                 }
-            }
 
-            // Remove element from full info array
-            var all_notes_full_info = that.user.notes.order.full_info;
-            for (var i = 0; i < all_notes_full_info.length; i++) {
-                if (all_notes_full_info[i].path == path) {
-                    all_notes_full_info.splice(i, 1);
+                // Remove element from full info array
+                var all_notes_full_info = that.user.notes.order.full_info;
+                for (var i = 0; i < all_notes_full_info.length; i++) {
+                    if (all_notes_full_info[i].path == path) {
+                        all_notes_full_info.splice(i, 1);
+                    }
                 }
-            }
 
-            // Remove element from form date array
-            var all_notes_form_date = that.user.notes.order.form_date;
-            list_path = path.split('/');
-            var year = list_path[1],
-                month = list_path[2],
-                day = list_path[3];
+                // Remove element from form date array
+                var all_notes_form_date = that.user.notes.order.form_date;
+                list_path = path.split('/');
+                var year = list_path[1],
+                    month = list_path[2].toLowerCase(),
+                    day = list_path[3];
 
-            if (all_notes_form_date[year][month][day].length == 1) {
-                if (all_notes_form_date[year][month].length == 1) {
-                    if (all_notes_form_date[year].length == 1) {
-                        delete all_notes_form_date[year];
+                // var all_notes_form_date = that.user.notes.order.form_date[year][month][day];
+
+                // for (var i = 0; i < all_notes_form_date.length; i++) {
+                //     if (all_notes_form_date[i] == path) {
+                //         var index = i;
+                //     }
+                // }
+
+                if (all_notes_form_date[year][month][day].length == 1) {
+                    if (all_notes_form_date[year][month].length == 1) {
+                        if (all_notes_form_date[year].length == 1) {
+                            delete all_notes_form_date[year];
+                        } else {
+                            delete all_notes_form_date[year][month];
+                        }
                     } else {
-                        delete all_notes_form_date[year][month];
+                        delete all_notes_form_date[year][month][day];
                     }
                 } else {
-                    delete all_notes_form_date[year][month][day];
+                    var index = all_notes_form_date[year][month][day].indexOf(path);
+                    all_notes_form_date[year][month][day].splice(index, 1);
                 }
-            } else {
-                var index = all_notes_form_date[year][month][day].indexOf(path);
-                all_notes_form_date[year][month][day].splice(index, 1);
-            }
 
-            // Remove element from current list
-            var all_notes_current_list = that.timeliner.current_list;
-            for (var i = 0; i < all_notes_current_list.length; i++) {
-                if (all_notes_current_list[i].path == path) {
-                    all_notes_current_list.splice(i, 1);
+                // Remove element from current list
+                var all_notes_current_list = that.timeliner.current_list;
+                for (var i = 0; i < all_notes_current_list.length; i++) {
+                    if (all_notes_current_list[i].path == path) {
+                        all_notes_current_list.splice(i, 1);
+                    }
                 }
-            }
-
+                that.isLoadFiles = false;
+            })
+        .error(function() {
+            that.isLoadFiles = false;
         });
     }
 
@@ -473,6 +522,12 @@ var MainController = function($http, $scope) {
             that.filters.searchSystem.push(text);
         }
     }
+
+    // this.showInfo = function() {
+    //     console.log(that.user.notes);
+    //     console.log('-------');
+    //     console.log(that.timeliner);
+    // }
 
     this.startPage = function() {
         that.getMetaFiles('tags');

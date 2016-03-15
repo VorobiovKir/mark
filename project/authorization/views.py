@@ -1,5 +1,5 @@
 from django.shortcuts import redirect
-from django.views.generic import FormView, RedirectView
+from django.views.generic import FormView, RedirectView, TemplateView
 from django.contrib.auth import (login as app_login,
                                  logout as app_logout)
 from django.contrib.auth import authenticate
@@ -29,6 +29,15 @@ class LoginView(FormView):
     template_name = 'authorization/login.html'
     form_class = AuthenticationForm
     success_url = reverse_lazy('notes:main')
+
+    def dispatch(self, request, *args, **kwargs):
+        """Dispatch
+
+        Redirect on main page user if he's active
+        """
+        if request.user.is_active:
+            return redirect(reverse('notes:main'))
+        return super(LoginView, self).dispatch(request, *args, **kwargs)
 
     def form_valid(self, form):
         """Login form valid
@@ -66,6 +75,15 @@ class RegisterView(FormView):
     form_class = RegistrationForm
     template_name = 'authorization/registration.html'
     success_url = reverse_lazy('notes:main')
+
+    def dispatch(self, request, *args, **kwargs):
+        """Dispatch
+
+        Redirect on main page user if he's active
+        """
+        if request.user.is_active:
+            return redirect(reverse('notes:main'))
+        return super(RegisterView, self).dispatch(request, *args, **kwargs)
 
     def form_valid(self, form):
         """Registration form Valid
@@ -107,3 +125,26 @@ class LogoutView(RedirectView):
         if request.user.is_authenticated():
             app_logout(request)
         return super(LogoutView, self).get(request, *args, **kwargs)
+
+
+class WelcomeView(TemplateView):
+    """Welcome View
+
+    This View allows User doit login or logout
+
+    Extends:
+        django.views.generic.TemplateView
+
+    Variables:
+        template_name {str} -- template name
+    """
+    template_name = 'authorization/welcome.html'
+
+    def dispatch(self, request, *args, **kwargs):
+        """Dispatch
+
+        Redirect on main page user if he's active
+        """
+        if request.user.is_active:
+            return redirect(reverse('notes:main'))
+        return super(WelcomeView, self).dispatch(request, *args, **kwargs)

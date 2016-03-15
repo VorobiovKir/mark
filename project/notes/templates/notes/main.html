@@ -19,18 +19,17 @@
 {% endblock local_js %}
 
 {% block content %}
-<!-- <div id="smoky">
-	<div class="row" ng-show="main.isLoadFiles">
-		<div class="col-xs-4 col-xs-offset-4">
-			<p class="text-center">Loading...
-				<button ng-click="main.loadFile()">Toggle</button>
-				<img class="text-center" src="{% static "main/images/preloader.gif" %}" alt="">
-			</p>
-		</div>
-	</div>
-</div> -->
 <div ng-app='MainApp' ng-cloak>
 	<div ng-controller="MainController as main">
+		<div ng-if="main.isLoadFiles">
+			<div class="row smoky-loading" id="smoky-loading">
+				<div class="col-xs-4 col-xs-offset-4 loading">
+					<p class="text-center">
+						<img class="text-center" src="{% static "main/images/preloader.gif" %}" alt="">
+					</p>
+				</div>
+			</div>
+		</div>
 		<div class="row" ng-show="!main.isPreload">
 			<div ng-show="!main.messages.errors.preloading" id="progress-block" class="col-xs-4 col-xs-offset-4">
 				<p class="text-center">Please wait, preloading...</p>
@@ -74,14 +73,14 @@
 					   </div>
 					   	<div ng-if="!panel.isSelected(2) && !panel.isSelected(5)">
 					   		<div ng-if="panel.isSelected(1)">
-						   		<div class="row">
-									<button class="btn btn-info pull-right create-note-btn" ng-click="main.toogleCreateNote()">Create new note</button>
-									<br>
-								</div>
 								<div class="row">
 									<div ng-show="main.messages.success.notes.create" class="alert alert-success">
 									  	<strong>Success! </strong> [[ main.messages.success.notes.create ]]
 									</div>
+								</div>
+						   		<div class="row">
+									<button class="btn btn-info pull-right create-note-btn" ng-click="main.toogleCreateNote()">Create new note</button>
+									<br>
 								</div>
 								<div class="create-note-block">
 									<div class="row select-group">
@@ -136,7 +135,7 @@
 												<div class="modal-dialog" role="document">
 													<div class="modal-content">
 														<div class="modal-header">
-															<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+															<!-- <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button> -->
 															<h4 class="modal-title" id="myModalLabel">Remove note</h4>
 														</div>
 														<div class="modal-body">
@@ -154,7 +153,7 @@
 												<div class="modal-dialog" role="document">
 													<div class="modal-content">
 														<div class="modal-header">
-															<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+															<!-- <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button> -->
 															<h4 class="modal-title" id="myModalLabel">Edit note</h4>
 														</div>
 														<div class="modal-body">
@@ -173,11 +172,12 @@
 								</div>
 								<div class="note-block-body">
 								   <p>[[ note.text ]]</p>
+
 								   <div class="row">
 										<br>
 										<div class="pull-right file-icons">
 											<a ng-href="[[main.url.getFileDownloadPath(file[0])]]" target="_blank" ng-repeat="file in note.files">
-												<!-- <img ngSrc="main.url.getStaticPath('main/images/', main.images.getImageByFormat(file[1]))" ng-click="main.downloadFile(file[0])" data-toggle="tooltip" data-placement="top" title="[[ file[0] ]]" alt="text_file" width="35"> -->
+												<!-- <img src="[[main.url.getStaticPath('main/images/', main.images.getImageByFormat(file[1]))]]" ng-click="main.downloadFile(file[0])" data-toggle="tooltip" data-placement="top" title="[[ file[0] ]]" alt="text_file" width="35"> -->
 												<img src="{% static "main/images/" %}[[ main.images.getImageByFormat(file[1]) ]]"  data-toggle="tooltip" data-placement="top" title="[[ file[0] ]]" alt="text_file" width="35">
 											</a>
 											<!-- <a href="#" target="_blank"><img width="50" src="{% static "main/images/text.png" %}" data-toggle="tooltip" data-placement="top" title="deez_06:49PM.txt" alt="text_file" /></a>
@@ -222,7 +222,7 @@
 												<div class="modal-dialog" role="document">
 													<div class="modal-content">
 														<div class="modal-header">
-															<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+															<!-- <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button> -->
 															<h4 class="modal-title" id="myModalLabel">Remove note</h4>
 														</div>
 														<div class="modal-body">
@@ -240,7 +240,7 @@
 												<div class="modal-dialog" role="document">
 													<div class="modal-content">
 														<div class="modal-header">
-															<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+															<!-- <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button> -->
 															<h4 class="modal-title" id="myModalLabel">Edit note</h4>
 														</div>
 														<div class="modal-body">
@@ -308,8 +308,14 @@
 											</span>
 										</div>
 									</div>
+									<hr>
 								</div>
 								<br>
+							</div>
+							<div class="row">
+								<div class="col-xs-2 col-xs-offset-5">
+									<a href="[[ main.url.getFullPath('auth.logout') ]]" class="btn btn-success btn-block btn-logout"><span class="glyphicon glyphicon-log-out"></span>Log Out</a>
+								</div>
 							</div>
 						</div>
 					</div>
