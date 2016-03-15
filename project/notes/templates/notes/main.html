@@ -73,8 +73,11 @@
 					   </div>
 					   	<div ng-if="!panel.isSelected(2) && !panel.isSelected(5)">
 					   		<div ng-if="panel.isSelected(1)">
-								<div class="row">
-									<div ng-show="main.messages.success.notes.create" class="alert alert-success">
+								<div ng-if="main.messages.success.notes.create" class="row">
+									<div class="alert alert-success">
+										<button type="button" class="close" ng-click="main.messages.success.notes.create = false;">
+											<span aria-hidden="true">&times;</span>
+										</button>
 									  	<strong>Success! </strong> [[ main.messages.success.notes.create ]]
 									</div>
 								</div>

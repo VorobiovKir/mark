@@ -48,7 +48,8 @@ angular
             }
             return filtered.sort();
         };
-    });;
+    });
+
     // .filter('orderByKeyNum', function() {
     //     return function(items, field, reverse) {
     //         console.log('**********');
