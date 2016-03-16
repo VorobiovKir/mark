@@ -55,20 +55,20 @@
 						    <div class="note-block" ng-repeat="note in searchNotes">
 						        <div class="note-block-heading">
 						                    <div class="row">
-						                        <div class="col-md-11">
+						                        <div class="col-xs-11">
 						                            <div class="row">
-						                                <span class="col-md-3 note-block-date">[[ note.date | toSec | date: 'EEE, MMM dd, yyyy' ]]</span>
-						                                <div class="col-md-3">
+						                                <span class="col-xs-3 note-block-date">[[ note.date | toSec | date: 'EEE, MMM dd, yyyy' ]]</span>
+						                                <div class="col-xs-3">
 						                                    <div class="select-style">
 						                                        <select ng-model='note.project' ng-change="main.changeMeta(note.path, 'project', note.project)" ng-options="option for option in main.user.projects track by option"></select>
 						                                    </div>
 						                                </div>
-						                                <div class="col-md-3">
+						                                <div class="col-xs-3">
 						                                    <div class="select-style">
 						                                        <select ng-model='note.tag' ng-change="main.changeMeta(note.path, 'tag', note.tag)" ng-options="option for option in main.user.tags track by option"></select>
 						                                    </div>
 						                                </div>
-						                                <div class="col-md-3">
+						                                <div class="col-xs-3">
 						                                    <form data="form_file_[[ note.path ]]" enctype="multipart/form-data">
 						                                        <input type="file" style="display:none" name="file" data-file="file_[[ note.path ]]" onchange="angular.element(this).scope().sendFileAjax()" />
 						                                    </form>
@@ -76,7 +76,7 @@
 						                                </div>
 						                            </div>
 						                        </div>
-						                        <div class="col-md-1">
+						                        <div class="col-xs-1">
 						                            <div class="row pull-right">
 						                                <span class="glyphicon glyphicon-pencil btn-edit" data-toggle="modal" data-target="#edit-modal-[[ $index ]]"></span>
 						                                <span class="glyphicon glyphicon-remove btn-remove" data-toggle="modal" data-target="#remove-modal-[[ $index ]]"></span>
