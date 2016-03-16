@@ -383,6 +383,8 @@ var MainController = function($http, $scope) {
             }).on('typeahead:selected', function(event, data){
                 that.search(data.text);
                 $scope.$apply();
+
+                console.log($scope.searchNotes);
             });
 
 
