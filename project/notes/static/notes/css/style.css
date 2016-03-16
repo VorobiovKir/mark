@@ -302,3 +302,54 @@ ul li {
 .btn-logout .glyphicon{
     margin-right: 7px;
 }
+
+.search-field{
+    font-family: Roboto;
+}
+
+.typeahead, .tt-query, .tt-hint {
+    border: 2px solid #CCCCCC;
+    border-radius: 8px;
+    height: 30px;
+    line-height: 30px;
+    outline: medium none;
+    width: 396px;
+    padding: 15px;
+    font-size: 16px;
+}
+.typeahead {
+    background-color: #FFFFFF;
+}
+.typeahead:focus {
+    border: 2px solid #0097CF;
+}
+.tt-query {
+    box-shadow: 0 1px 1px rgba(0, 0, 0, 0.075) inset;
+}
+.tt-hint {
+    color: #999999;
+}
+.tt-menu {
+    background-color: #fff;
+    border: 1px solid rgba(0, 0, 0, 0.2);
+    border-radius: 8px;
+    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+    margin-top: 12px;
+    padding: 8px 0px;
+    width: 422px;
+}
+.tt-suggestion {
+    font-size: 16px;
+    line-height: 20px;
+    padding: 3px 20px;
+    height: 25px;
+    overflow: hidden;
+}
+.tt-suggestion:hover, .tt-cursor {
+    background-color: #00BFFF;
+    cursor: pointer;
+    color: #FFFFFF;
+}
+.tt-suggestion p {
+    margin: 0;
+}

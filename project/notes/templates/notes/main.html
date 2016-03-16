@@ -16,38 +16,23 @@
 	<script type="text/javascript" src="{% static "notes/js/controllers/PanelController.js" %}"></script>
 	<!-- [A] Module -->
 	<script type="text/javascript" src="{% static "notes/js/main.js" %}"></script>
+	<!-- Bootstrap Typeahead.js -->
+	<script type="text/javascript" src="{% static "main/lib/typeahead.js" %}"></script>
 {% endblock local_js %}
 
 {% block content %}
 <div ng-app='MainApp' ng-cloak>
 	<div ng-controller="MainController as main">
-		<div ng-if="main.isLoadFiles">
-			<div class="row smoky-loading" id="smoky-loading">
-				<div class="col-xs-4 col-xs-offset-4 loading">
-					<p class="text-center">
-						<img class="text-center" src="{% static "main/images/preloader.gif" %}" alt="">
-					</p>
-				</div>
-			</div>
-		</div>
-		<div class="row" ng-show="!main.isPreload">
-			<div ng-show="!main.messages.errors.preloading" id="progress-block" class="col-xs-4 col-xs-offset-4">
-				<p class="text-center">Please wait, preloading...</p>
-				<div id="progressbar"></div>
-			</div>
-			<div ng-show="main.messages.errors.preloading" id="progress-block" class="col-xs-4 col-xs-offset-4">
-				<p class="text-center">Something going wrong, please reload the page :(</p>
-			</div>
-		</div>
+		{% include "notes/parts/smokie_screens.html" %}
 		<div id="load-screen">
 			<div ng-controller="PanelController as panel">
 				<div class="page-header">
 					<a ng-click="panel.selectTab(1);" href="#" class="main"><img width="80" src="{% static 'main/images/deez_notes_logo.png' %}"></a>
 					<p class="pull-right">
-						<span class="search-field">
-							<input type="text" class="form-control" id="search-field" placeholder="Searching...">
+						<span ng-show="panel.isSelected(6)" class="search-field">
+							<input class="form-control typeahead" id="searchField" type="text" placeholder="Searching...">
 						</span>
-						<a href="#"><img width="50" src="{% static "main/images/search_icon.png" %}" class="search-btn" alt=""></a>
+						<a href="#" ng-click="panel.selectTab(6); main.searchSystem.showSearchField();"><img width="50" src="{% static "main/images/search_icon.png" %}" class="search-btn" alt=""></a>
 						<a ng-click="panel.selectTab(5);" href="#"><img width="50" src="{% static "main/images/settings_icon.png" %}" alt="" class="settings-btn"></a>
 					</p>
 				</div>
@@ -59,287 +44,109 @@
 					<div class="container main-container col-xs-8 col-xs-offset-2">
 						<h1 class="text-center">Hello, {{ request.user.username|title }}!</h1>
 						<br/>
-						<div ng-if="panel.isSelected(3)">
-							<div class="select-style select-tag">
-								<select ng-model='main.filters.projects' ng-options="option for option in main.user.projects track by option"></select>
-							</div>
-							<br>
-					   </div>
-					   <div ng-if="panel.isSelected(4)">
-							<div class="select-style select-tag">
-								<select ng-model='main.filters.tags' ng-options="option for option in main.user.tags track by option"></select>
-							</div>
-							<br>
-					   </div>
-					   	<div ng-if="!panel.isSelected(2) && !panel.isSelected(5)">
-					   		<div ng-if="panel.isSelected(1)">
-								<div ng-if="main.messages.success.notes.create" class="row">
-									<div class="alert alert-success">
-										<button type="button" class="close" ng-click="main.messages.success.notes.create = false;">
-											<span aria-hidden="true">&times;</span>
-										</button>
-									  	<strong>Success! </strong> [[ main.messages.success.notes.create ]]
-									</div>
-								</div>
-						   		<div class="row">
-									<button class="btn btn-info pull-right create-note-btn" ng-click="main.toogleCreateNote()">Create new note</button>
-									<br>
-								</div>
-								<div class="create-note-block">
-									<div class="row select-group">
-										<div class="col-md-3">
-										   	<div class="select-style">
-											   	<select ng-model='main.user.create.project' ng-options="option for option in main.user.projects track by option"></select>
-										   	</div>
-									   	</div>
-									   	<div class="col-md-3">
-										   	<div class="select-style">
-											   	<select ng-model='main.user.create.tag' ng-options="option for option in main.user.tags track by option"></select>
-										   	</div>
-									   	</div>
-								   	</div>
-									<textarea class="form-control" ng-model='main.user.create.text' rows="3" placeholder="Write note's text here..."></textarea>
-									<div class="row">
-										<button type="submit" class="btn btn-success col-xs-offset-8 col-xs-3 create-note-btn-submit" ng-click="main.createNote()">Create Note</button>
-									</div>
-								</div>
-							</div>
-							<div ng-show="main.filtered(panel.tab, note)" class="note-block" ng-repeat="note in main.user.notes.order.full_info">
-								<div class="note-block-heading">
-									<div class="row">
-										<div class="col-md-11">
-										   	<div class="row">
-											   	<span class="col-md-3 note-block-date">[[ note.date | toSec | date: 'EEE, MMM dd, yyyy' ]]</span>
-											   	<div class="col-md-3">
-												   	<div class="select-style">
-													   	<select ng-model='note.project' ng-change="main.changeMeta(note.path, 'project', note.project)" ng-options="option for option in main.user.projects track by option"></select>
-												   	</div>
-											   	</div>
-											   	<div class="col-md-3">
-												   	<div class="select-style">
-													   	<select ng-model='note.tag' ng-change="main.changeMeta(note.path, 'tag', note.tag)" ng-options="option for option in main.user.tags track by option"></select>
-												   	</div>
-											   	</div>
-											   	<div class="col-md-3">
-											   		<form data="form_file_[[ note.path ]]" enctype="multipart/form-data">
-											   			<input type="file" style="display:none" name="file" data-file="file_[[ note.path ]]" onchange="angular.element(this).scope().sendFileAjax()" />
-											   		</form>
-											   		<button class="btn btn-block insert_btn" ng-click="main.selectFile(note.path)">Insert File</button>
-											   	</div>
-										   	</div>
-										</div>
-										<div class="col-md-1">
-											<div class="row pull-right">
-												<span class="glyphicon glyphicon-pencil btn-edit" data-toggle="modal" data-target="#edit-modal-[[ $index ]]"></span>
-												<span class="glyphicon glyphicon-remove btn-remove" data-toggle="modal" data-target="#remove-modal-[[ $index ]]"></span>
-											</div>
+						{% include "notes/parts/page_projects.html" %}
+					   	{% include "notes/parts/page_tags.html" %}
+					   	{% include "notes/parts/all_notes.html" %}
+						{% include "notes/parts/page_daily_journal.html" %}
+						{% include "notes/parts/page_settings.html" %}
 
-											<div class="modal modal-remove fade" id="remove-modal-[[ $index ]]" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
-												<div class="modal-dialog" role="document">
-													<div class="modal-content">
-														<div class="modal-header">
-															<!-- <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button> -->
-															<h4 class="modal-title" id="myModalLabel">Remove note</h4>
-														</div>
-														<div class="modal-body">
-															<p class="modal-text">If you remove this note You also remove all binding files. Are you sure that you want delete this note?</p>
-														</div>
-														<div class="modal-footer">
-															<button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
-															<button type="button" class="btn btn-danger" data-dismiss="modal" ng-click="main.delNote(note.path)">Remove note</button>
-														</div>
-													</div>
-												</div>
-											</div>
 
-											<div class="modal modal-edit fade" id="edit-modal-[[ $index ]]" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
-												<div class="modal-dialog" role="document">
-													<div class="modal-content">
-														<div class="modal-header">
-															<!-- <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button> -->
-															<h4 class="modal-title" id="myModalLabel">Edit note</h4>
-														</div>
-														<div class="modal-body">
-															<textarea class="form-control" id="note-edit-text-[[ $index ]]" rows="3">[[ note.text ]]</textarea>
-														</div>
-														<div class="modal-footer">
-															<button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
-															<button type="button" class="btn btn-info" data-dismiss="modal" ng-click="main.editNote($index, note.path)">Edit note</button>
-														</div>
-													</div>
-												</div>
-											</div>
+						<div ng-if="panel.isSelected(6)">
+						    <div class="note-block" ng-repeat="note in searchNotes">
+						        <div class="note-block-heading">
+						            <div class="row">
+						                <div class="col-md-11">
+						                    <div class="row">
+						                        <span class="col-md-3 note-block-date">[[ note.date | toSec | date: 'EEE, MMM dd, yyyy' ]]</span>
+						                        <div class="col-md-3">
+						                            <div class="select-style">
+						                                <select ng-model='note.project' ng-change="main.changeMeta(note.path, 'project', note.project)" ng-options="option for option in main.user.projects track by option"></select>
+						                            </div>
+						                        </div>
+						                        <div class="col-md-3">
+						                            <div class="select-style">
+						                                <select ng-model='note.tag' ng-change="main.changeMeta(note.path, 'tag', note.tag)" ng-options="option for option in main.user.tags track by option"></select>
+						                            </div>
+						                        </div>
+						                        <div class="col-md-3">
+						                            <form data="form_file_[[ note.path ]]" enctype="multipart/form-data">
+						                                <input type="file" style="display:none" name="file" data-file="file_[[ note.path ]]" onchange="angular.element(this).scope().sendFileAjax()" />
+						                            </form>
+						                            <button class="btn btn-block insert_btn" ng-click="main.selectFile(note.path)">Insert File</button>
+						                        </div>
+						                    </div>
+						                </div>
+						                <div class="col-md-1">
+						                    <div class="row pull-right">
+						                        <span class="glyphicon glyphicon-pencil btn-edit" data-toggle="modal" data-target="#edit-modal-[[ $index ]]"></span>
+						                        <span class="glyphicon glyphicon-remove btn-remove" data-toggle="modal" data-target="#remove-modal-[[ $index ]]"></span>
+						                    </div>
 
-										</div>
-								   	</div>
-								</div>
-								<div class="note-block-body">
-								   <p>[[ note.text ]]</p>
+						                    <div class="modal modal-remove fade" id="remove-modal-[[ $index ]]" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+						                        <div class="modal-dialog" role="document">
+						                            <div class="modal-content">
+						                                <div class="modal-header">
+						                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+						                                    <h4 class="modal-title" id="myModalLabel">Remove note</h4>
+						                                </div>
+						                                <div class="modal-body">
+						                                    <p class="modal-text">If you remove this note You also remove all binding files. Are you sure that you want delete this note?</p>
+						                                </div>
+						                                <div class="modal-footer">
+						                                    <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+						                                    <button type="button" class="btn btn-danger" data-dismiss="modal" ng-click="main.delNote(note.path)">Remove note</button>
+						                                </div>
+						                            </div>
+						                        </div>
+						                    </div>
 
-								   <div class="row">
-										<br>
-										<div class="pull-right file-icons">
-											<a ng-href="[[main.url.getFileDownloadPath(file[0])]]" target="_blank" ng-repeat="file in note.files">
-												<!-- <img src="[[main.url.getStaticPath('main/images/', main.images.getImageByFormat(file[1]))]]" ng-click="main.downloadFile(file[0])" data-toggle="tooltip" data-placement="top" title="[[ file[0] ]]" alt="text_file" width="35"> -->
-												<img src="{% static "main/images/" %}[[ main.images.getImageByFormat(file[1]) ]]"  data-toggle="tooltip" data-placement="top" title="[[ file[0] ]]" alt="text_file" width="35">
-											</a>
-											<!-- <a href="#" target="_blank"><img width="50" src="{% static "main/images/text.png" %}" data-toggle="tooltip" data-placement="top" title="deez_06:49PM.txt" alt="text_file" /></a>
-											<a href="#"><img width="50" src="{% static "main/images/pdf.png" %}" data-toggle="tooltip" data-placement="top" title="some_name.pdf" alt="pdf_file" /></a> -->
-										</div>
-									</div>
-								</div>
-							</div>
+						                    <div class="modal modal-edit fade" id="edit-modal-[[ $index ]]" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+						                        <div class="modal-dialog" role="document">
+						                            <div class="modal-content">
+						                                <div class="modal-header">
+						                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+						                                    <h4 class="modal-title" id="myModalLabel">Edit note</h4>
+						                                </div>
+						                                <div class="modal-body">
+						                                    <textarea class="form-control" id="note-edit-text-[[ $index ]]" rows="3">[[ note.text ]]</textarea>
+						                                </div>
+						                                <div class="modal-footer">
+						                                    <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+						                                    <button type="button" class="btn btn-info" data-dismiss="modal" ng-click="main.editNote($index, note.path)">Edit note</button>
+						                                </div>
+						                            </div>
+						                        </div>
+						                    </div>
+						                </div>
+						            </div>
+						        </div>
+						        <div class="note-block-body">
+						           <p>[[ note.text ]]</p>
+						           <div class="row">
+						                <br>
+						                <div class="pull-right file-icons">
+						                    <a ng-href="[[main.url.getFileDownloadPath(file[0])]]" target="_blank" ng-repeat="file in note.files">
+						                        <img src="{% static "main/images/" %}[[ main.images.getImageByFormat(file[1]) ]]"  data-toggle="tooltip" data-placement="top" title="[[ file[0] ]]" alt="text_file" width="35">
+						                    </a>
+						                    <a href="#" ng-repeat="file in note.files">
+						                        <img src="{% static "main/images/text.png" %}" data-toggle="tooltip" data-placement="top" title="[[ file[0] ]]" alt="text_file" width="50">[[ file[1].split('/')[1] ]]
+						                    </a>
+						                    <a href="#" target="_blank"><img width="50" src="{% static "main/images/text.png" %}" data-toggle="tooltip" data-placement="top" title="deez_06:49PM.txt" alt="text_file" /></a>
+						                    <a href="#"><img width="50" src="{% static "main/images/pdf.png" %}" data-toggle="tooltip" data-placement="top" title="some_name.pdf" alt="pdf_file" /></a>
+						                </div>
+						            </div>
+						        </div>
+						    </div>
 						</div>
-						<div ng-if="panel.isSelected(2)">
-							<div class="note-block" ng-repeat="note in main.timeliner.current_list">
-								<div class="note-block-heading">
-								   	<div class="row">
-										<div class="col-md-11">
-										   	<div class="row">
-											   	<span class="col-md-3 note-block-date">[[ note.date | toSec | date: 'EEE, MMM dd, yyyy' ]]</span>
-											   	<div class="col-md-3">
-												   	<div class="select-style">
-													   	<select ng-model='note.project' ng-change="main.changeMeta(note.path, 'project', note.project)" ng-options="option for option in main.user.projects track by option"></select>
-												   	</div>
-											   	</div>
-											   	<div class="col-md-3">
-												   	<div class="select-style">
-													   	<select ng-model='note.tag' ng-change="main.changeMeta(note.path, 'tag', note.tag)" ng-options="option for option in main.user.tags track by option"></select>
-												   	</div>
-											   	</div>
-											   	<div class="col-md-3">
-											   		<form data="form_file_[[ note.path ]]" enctype="multipart/form-data">
-											   			<input type="file" style="display:none" name="file" data-file="file_[[ note.path ]]" onchange="angular.element(this).scope().sendFileAjax()" />
-											   		</form>
-											   		<button class="btn btn-block insert_btn" ng-click="main.selectFile(note.path)">Insert File</button>
-											   	</div>
-										   	</div>
-										</div>
-										<div class="col-md-1">
-											<div class="row pull-right">
-												<span class="glyphicon glyphicon-pencil btn-edit" data-toggle="modal" data-target="#edit-modal-[[ $index ]]"></span>
-												<span class="glyphicon glyphicon-remove btn-remove" data-toggle="modal" data-target="#remove-modal-[[ $index ]]"></span>
-											</div>
 
-											<div class="modal modal-remove fade" id="remove-modal-[[ $index ]]" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
-												<div class="modal-dialog" role="document">
-													<div class="modal-content">
-														<div class="modal-header">
-															<!-- <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button> -->
-															<h4 class="modal-title" id="myModalLabel">Remove note</h4>
-														</div>
-														<div class="modal-body">
-															<p class="modal-text">If you remove this note You also remove all binding files. Are you sure that you want delete this note?</p>
-														</div>
-														<div class="modal-footer">
-															<button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
-															<button type="button" class="btn btn-danger" data-dismiss="modal" ng-click="main.delNote(note.path)">Remove note</button>
-														</div>
-													</div>
-												</div>
-											</div>
 
-											<div class="modal modal-edit fade" id="edit-modal-[[ $index ]]" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
-												<div class="modal-dialog" role="document">
-													<div class="modal-content">
-														<div class="modal-header">
-															<!-- <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button> -->
-															<h4 class="modal-title" id="myModalLabel">Edit note</h4>
-														</div>
-														<div class="modal-body">
-															<textarea class="form-control" id="note-edit-text-[[ $index ]]" rows="3">[[ note.text ]]</textarea>
-														</div>
-														<div class="modal-footer">
-															<button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
-															<button type="button" class="btn btn-info" data-dismiss="modal" ng-click="main.editNote($index, note.path)">Edit note</button>
-														</div>
-													</div>
-												</div>
-											</div>
-										</div>
-								   	</div>
-								</div>
-								<div class="note-block-body">
-								   <p>[[ note.text ]]</p>
-								   <div class="row">
-										<br>
-										<div class="pull-right file-icons">
-											<a ng-href="[[main.url.getFileDownloadPath(file[0])]]" target="_blank" ng-repeat="file in note.files">
-												<img src="{% static "main/images/" %}[[ main.images.getImageByFormat(file[1]) ]]"  data-toggle="tooltip" data-placement="top" title="[[ file[0] ]]" alt="text_file" width="35">
-											</a>
-											<!-- <a href="#" ng-repeat="file in note.files">
-												<img src="{% static "main/images/text.png" %}" data-toggle="tooltip" data-placement="top" title="[[ file[0] ]]" alt="text_file" width="50">[[ file[1].split('/')[1] ]]
-											</a>
-											<a href="#" target="_blank"><img width="50" src="{% static "main/images/text.png" %}" data-toggle="tooltip" data-placement="top" title="deez_06:49PM.txt" alt="text_file" /></a>
-											<a href="#"><img width="50" src="{% static "main/images/pdf.png" %}" data-toggle="tooltip" data-placement="top" title="some_name.pdf" alt="pdf_file" /></a> -->
-										</div>
-									</div>
-								</div>
-							</div>
-						</div>
-						<div ng-if="panel.isSelected(5)">
-							<br>
-							<div ng-show="main.messages.success.settings" class="alert alert-success">
-							  	<strong>Success! </strong> [[ main.messages.success.settings ]]
-							</div>
-							<div class="row">
-								<div class="col-xs-6 col-xs-offset-3">
-									<hr>
-									<div class="form-group">
-										<label for="projectInput">Add new project</label>
-										<p class="text-danger" ng-bind="main.user.choices.errors.projects"></p>
-										<div class="input-group">
-											<input type="text" id="projectInput" ng-model="main.user.choices.projects" class="form-control" placeholder="Project">
-											<span class="input-group-btn">
-												<button class="btn btn-default" type="button" ng-click="main.addDelMeta('projects', 'add')">Add</button>
-											</span>
-										</div>
-									</div>
-								</div>
-								<br>
-							</div>
-							<div class="row">
-								<div class="col-xs-6 col-xs-offset-3">
-									<hr>
-									<div class="form-group">
-										<label for="tagInput">Add new tag</label>
-										<p class="text-danger" ng-bind="main.user.choices.errors.tags"></p>
-										<div class="input-group">
-											<input type="text" id="tagInput" ng-model="main.user.choices.tags" class="form-control" placeholder="Tag">
-											<span class="input-group-btn">
-												<button class="btn btn-default" ng-click="main.addDelMeta('tags', 'add')" type="button">Add</button>
-											</span>
-										</div>
-									</div>
-									<hr>
-								</div>
-								<br>
-							</div>
-							<div class="row">
-								<div class="col-xs-2 col-xs-offset-5">
-									<a href="[[ main.url.getFullPath('auth.logout') ]]" class="btn btn-success btn-block btn-logout"><span class="glyphicon glyphicon-log-out"></span>Log Out</a>
-								</div>
-							</div>
-						</div>
+
+
+
+
+
 					</div>
-					<div ng-if="panel.isSelected(2)" class="timeliner_block pull-right col-xs-2">
-						<ul class="timeliner" id="timeliner">
-							<li ng-repeat="(year, year_value) in main.user.notes.order.form_date">
-								<span>[[ year ]] &#8212;
-									<ul class="timeliner-month">
-										<li ng-repeat="month in year_value | orderByMonthName">
-											<span class="date-month" onclick="toggleTimeliner(event);">[[ month ]]</span> &#8212;
-											<ul class="timeliner-day">
-												<li ng-repeat="day in year_value[month] | orderByNum">
-													<p class="date" ng-click="main.changeDate(year_value[month][day][0])">[[ main.timeliner.groupDate(year, month, day) | toSec | date: 'EEE dd' ]]</p>
-												</li>
-											</ul>
-										</li>
-									</ul>
-								</span>
-							</li>
-						</ul>
-					</div>
+					{% include "notes/parts/timeliner.html" %}
 				</div>
 			</div>
 		</div>

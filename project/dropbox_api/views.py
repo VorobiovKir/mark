@@ -159,20 +159,20 @@ def dropbox_get_notes_version_search(request):
     dbx = dropbox_get_connection(user)
     client = dropbox_get_connection(user, 'client')
 
-    result = get_notes_by_search(dbx)
-    result = custom_funcs.sorted_by_time(result)
+    notes = get_notes_by_search(dbx)
+    notes = custom_funcs.sorted_by_time(notes)
 
-    res = {}
-    for file in result:
-        res = custom_funcs.format_date(file, res)
+    date_notes = {}
+    for note in notes:
+        date_notes = custom_funcs.format_date(note, date_notes)
 
-    order_res = custom_funcs.format_get_list_full_info(result, client)
-    # order_res = custom_funcs.format_get_dict_full_info(result, client)
+    full_info_notes = custom_funcs.format_get_list_full_info(notes, client)
+    # full_info_notes = custom_funcs.format_get_dict_full_info(result, client)
 
     return JsonResponse({
-        'format_result': res,
-        'result': order_res,
-        'order': result
+        'format_result': date_notes,
+        'result': full_info_notes,
+        'order': notes
     })
 
 
@@ -189,19 +189,19 @@ def dropbox_get_notes_version_alt(request):
     dbx = dropbox_get_connection(user)
     client = dropbox_get_connection(user, 'client')
 
-    result = get_notes_by_exceptions(dbx)
-    result = custom_funcs.sorted_by_time(result)
+    notes = get_notes_by_exceptions(dbx)
+    notes = custom_funcs.sorted_by_time(notes)
 
-    res = {}
-    for file in result:
-        res = custom_funcs.format_date(file, res)
+    date_notes = {}
+    for note in notes:
+        date_notes = custom_funcs.format_date(note, date_notes)
 
-    order_res = custom_funcs.format_get_list_full_info(result, client)
+    full_info_notes = custom_funcs.format_get_list_full_info(notes, client)
 
     return JsonResponse({
-        'format_result': res,
-        'result': order_res,
-        'order': result
+        'format_result': date_notes,
+        'result': full_info_notes,
+        'order': notes
     })
 
 
@@ -333,9 +333,9 @@ def dropbox_create_or_edit_note(request):
                 '/%Y/%b/%d/deez_{}_{}_%I:%M%p.txt').format(project, tag)
 
         i = 1
-        first_note_path = note_path
+        request_note_path = note_path
         while client.search(*note_path.rsplit('/', 1)):
-            note_path = '{}({}).txt'.format(first_note_path[:-4], i)
+            note_path = '{}({}).txt'.format(request_note_path[:-4], i)
             i += 1
 
     if not note_path:
@@ -365,21 +365,21 @@ def dropbox_change_meta_note(request):
     client = dropbox_get_connection(user, 'client')
 
     path = request.GET.get('path')
-    type_meta = request.GET.get('type')
+    meta_type = request.GET.get('type')
     meta_name = request.GET.get('meta_name')
+    splitted_path = path.split('/')
 
-    path_list = path.split('/')
-    if client.search('/{}/'.format('/'.join(path_list[1:-1])), path_list[-1]):
-        note_name = path.split('_')
+    if client.search('/{}/'.format('/'.join(splitted_path[1:-1])), splitted_path[-1]):
+        splitted_note_name = path.split('_')
 
-        if type_meta == 'project':
-            position = 1
-        elif type_meta == 'tag':
-            position = 2
+        if meta_type == 'project':
+            index = 1
+        elif meta_type == 'tag':
+            index = 2
 
-        note_name[position] = meta_name
+        splitted_note_name[index] = meta_name
 
-        client.file_move(path, '_'.join(note_name))
+        client.file_move(path, '_'.join(splitted_note_name))
         return JsonResponse({'res': 'success'})
     else:
         return HttpResponseServerError('File doesn\'t find')
@@ -405,34 +405,51 @@ def dropbox_search(request):
 
 # --------------------- META DATA VIEWS ---------------------
 def dropbox_get_meta_files(request):
-    # # # TEST TEST TEST
-    # admin = User.objects.get(pk=1)
-    # client = dropbox_get_connection(admin, 'client')
+    """Dropbox get meta files
 
+    Method return all Projects or Tags name
+
+    Returns:
+        [list] -- List of name Projects or Tags
+    """
     client = dropbox_get_connection(request.user, 'client')
     search_type = request.GET.get('search_type')
+
     if search_type:
-        res = dropbox_get_meta_data(search_type, client)
         if search_type == 'projects':
             default_name = settings.DROPBOX_DEFAULT_PROJECT
         else:
             default_name = settings.DROPBOX_DEFAULT_TAG
-        res = [default_name] + res
 
-        return JsonResponse({'result': res})
+        result = dropbox_get_meta_data(search_type, client)
+        result = [default_name] + result
+
+        return JsonResponse({'result': result})
     else:
         return JsonResponse({'errors': 'not valible query'})
 
 
 def dropbox_get_meta_data(type_meta_data, api):
+    """Dropbox get meta data
+
+    Additional method for get all Projects or Tags name
+    Get Type ('projects' or 'tags') and Return list
+
+    Arguments:
+        type_meta_data {string} -- 'projects' or 'tags'
+        api {object} -- dropboxes api connection object
+
+    Returns:
+        [list] -- list of name
+    """
     if type_meta_data == 'projects':
         file_name = settings.DROPBOX_PROJECTS_FILE
     elif type_meta_data == 'tags':
         file_name = settings.DROPBOX_TAGS_FILE
 
     if api.search(settings.DROPBOX_META_PATH, file_name):
-        file = api.get_file(settings.DROPBOX_META_PATH + file_name)
-        return filter(None, file.read().split('\n'))
+        file_content = api.get_file(settings.DROPBOX_META_PATH + file_name)
+        return filter(None, file_content.read().split('\n'))
     else:
         return []
 
