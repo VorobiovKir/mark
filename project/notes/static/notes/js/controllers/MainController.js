@@ -84,6 +84,8 @@ var MainController = function($http, $scope) {
                         case 'vnd.ms-powerpoint':
                             return 'powerpoint.png';
                         case 'msword':
+                        case 'vnd.ms-word.document.macroenabled.12':
+                        case 'vnd.ms-word.template.macroenabled.12':
                         case 'vnd.openxmlformats-officedocument.wordprocessingml.document':
                             return 'word.png';
                         default:
