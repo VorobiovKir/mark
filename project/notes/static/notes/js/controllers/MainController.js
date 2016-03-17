@@ -39,10 +39,21 @@ var MainController = function($http, $scope) {
 
     this.images = {
         formats: {
-            'application/vnd.ms-excel': 'excel.png',
             'application/pdf': 'pdf.png',
             'application/vnd.ms-powerpoint': 'powerpoint.png',
+            // excels formats
+            'application/vnd.ms-excel': 'excel.png',
+            'application/msexcel': 'excel.png',
+            'application/x-msexcel': 'excel.png',
+            'application/x-ms-excel': 'excel.png',
+            'application/x-excel': 'excel.png',
+            'application/x-dos_ms_excel': 'excel.png',
+            'application/xls': 'excel.png',
+            'application/x-xls': 'excel.png',
+            'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet': 'excel.png',
+            // words formats
             'application/msword': 'word.png',
+            'application/vnd.openxmlformats-officedocument.wordprocessingml.document': 'word.png',
             'text': 'text.png',
             'image': 'any_image_type.png'
         },
@@ -59,12 +70,21 @@ var MainController = function($http, $scope) {
                 case 'application':
                     switch (type) {
                         case 'vnd.ms-excel':
+                        case 'msexcel':
+                        case 'x-msexcel':
+                        case 'x-ms-excel':
+                        case 'x-excel':
+                        case 'x-dos_ms_excel':
+                        case 'xls':
+                        case 'x-xls':
+                        case 'vnd.openxmlformats-officedocument.spreadsheetml.sheet':
                             return 'excel.png';
                         case 'pdf':
                             return 'pdf.png';
                         case 'vnd.ms-powerpoint':
                             return 'powerpoint.png';
                         case 'msword':
+                        case 'vnd.openxmlformats-officedocument.wordprocessingml.document':
                             return 'word.png';
                         default:
                             return 'default.png';

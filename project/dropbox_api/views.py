@@ -560,14 +560,15 @@ def dropbox_download_file(request):
     if path:
         if dbx.files_search(*path.rsplit('/', 1)):
             file = client.get_file(path)
+            header = file.getheaders()
+            content_type = header.get('Content-Type')
 
-            # header = file.getheaders()
-            # content_type = header.get('Content-Type')
             # response = HttpResponse(content=file.read())
-            # response['Content-Type'] = content_type
             # response['Content-Disposition'] = 'attachment; filename="foo.pdf"'
+            # response['Content-Type'] = 'application/pdf'
 
-            response = FileResponse(file, 'rb')
+            response = FileResponse(file)
+            response['Content-Type'] = content_type
 
             return response
         else:
