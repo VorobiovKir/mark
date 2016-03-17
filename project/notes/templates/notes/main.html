@@ -31,7 +31,7 @@
 				<div class="page-header">
 					<a ng-click="panel.selectTab(1); main.refreshSettings();" href="#" class="main"><img width="80" src="{% static 'main/images/deez_notes_logo.png' %}"></a>
 					<p class="pull-right">
-						<span ng-show="panel.isSelected(6) main.refreshSettings();" class="search-field">
+						<span ng-show="panel.isSelected(6); main.refreshSettings();" class="search-field">
 							<input class="form-control typeahead" id="searchField" ng-keydown="press($event)" type="text" placeholder="Searching...">
 						</span>
 						<a href="#" ng-click="panel.selectTab(6); main.refreshSettings(); main.searchSystem.showSearchField();"><img width="50" src="{% static "main/images/search_icon.png" %}" class="search-btn" alt=""></a>
