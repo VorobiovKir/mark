@@ -357,13 +357,15 @@ var MainController = function($http, $scope) {
         $('.create-note-block').toggle();
     }
 
-    this.filtered = function(page, search) {
+    this.filtered = function(page, note) {
         if (page == 3) {
-            return that.filters.projects == search.project;
+            return that.filters.projects == note.project;
         } else if (page == 4) {
-            return that.filters.tags == search.tag;
+            return that.filters.tags == note.tag;
         } else if (page == 1) {
             return true;
+        } else if (page == 6) {
+            return (note.text.search($scope.searchTest) != -1)
         }
     }
 
@@ -377,6 +379,14 @@ var MainController = function($http, $scope) {
         }
     }
 
+    $scope.searchTest = '';
+
+    $scope.press = function (e) {
+        if (e.keyCode == 13) {
+            $scope.searchTest = e.target.value;
+        }
+    };
+
     this.preloading = function(count) {
         that.countPreload++;
         if (that.countPreload == count) {
@@ -389,45 +399,45 @@ var MainController = function($http, $scope) {
 
             that.searchSystem.prepairAutocomplete();
 
-            var notes = new Bloodhound({
-                datumTokenizer: Bloodhound.tokenizers.obj.whitespace('text'),
-                queryTokenizer: Bloodhound.tokenizers.whitespace,
-                local: that.filters.searchSystem
-            });
-
-            notes.initialize();
-            var result = null;
-            $('.typeahead').typeahead(
-                null, {
-                name: 'notes',
-                displayKey: 'text',
-                source: notes.ttAdapter()
-            }).on('typeahead:selected', function(event, data){
-                that.search(data.text);
-                $scope.$apply();
-
-                console.log($scope.searchNotes);
-            });
-
-
-            // var states = that.filters.searchSystem;
-
-            // var states = new Bloodhound({
-            //   datumTokenizer: Bloodhound.tokenizers.whitespace,
-            //   queryTokenizer: Bloodhound.tokenizers.whitespace,
-
-            //   local: that.filters.searchSystem
+            // var notes = new Bloodhound({
+            //     datumTokenizer: Bloodhound.tokenizers.obj.whitespace('text'),
+            //     queryTokenizer: Bloodhound.tokenizers.whitespace,
+            //     local: that.filters.searchSystem
             // });
 
-            // $('#bloodhound .typeahead').typeahead({
-            //   hint: true,
-            //   highlight: true,
-            //   minLength: 1
-            // },
-            // {
-            //   name: 'states',
-            //   source: states
+            // notes.initialize();
+            // var result = null;
+            // $('.typeahead').typeahead(
+            //     null, {
+            //     name: 'notes',
+            //     displayKey: 'text',
+            //     source: notes.ttAdapter()
+            // }).on('typeahead:selected', function(event, data){
+            //     that.search(data.text);
+            //     $scope.$apply();
+
+            //     console.log($scope.searchNotes);
             // });
+
+
+            var states = that.filters.searchSystem;
+
+            var states = new Bloodhound({
+              datumTokenizer: Bloodhound.tokenizers.whitespace,
+              queryTokenizer: Bloodhound.tokenizers.whitespace,
+
+              local: that.filters.searchSystem
+            });
+
+            $('.typeahead').typeahead({
+              hint: true,
+              highlight: true,
+              minLength: 3
+            },
+            {
+              name: 'states',
+              source: states
+            });
 
         }
     }
@@ -603,15 +613,19 @@ var MainController = function($http, $scope) {
             var all_notes = that.user.notes.order.full_info;
             for (var i in all_notes) {
 
-                var text = all_notes[i].text;
-                var path = all_notes[i].path;
+                var text = all_notes[i].text.split(' ');
+                // var path = all_notes[i].path;
 
-                var obj = {
-                    text: text,
-                    path: path
-                };
+                // var obj = {
+                //     text: text,
+                //     path: path
+                // };
+                for (var y in text) {
+                    that.filters.searchSystem.push(text[y]);
+                }
 
-                that.filters.searchSystem.push(obj);
+
+                // that.filters.searchSystem.push(obj);
             }
             console.log(that.filters.searchSystem);
 

@@ -30,7 +30,7 @@
 					<a ng-click="panel.selectTab(1);" href="#" class="main"><img width="80" src="{% static 'main/images/deez_notes_logo.png' %}"></a>
 					<p class="pull-right">
 						<span ng-show="panel.isSelected(6)" class="search-field">
-							<input class="form-control typeahead" id="searchField" type="text" placeholder="Searching...">
+							<input class="form-control typeahead" id="searchField" ng-keydown="press($event)" type="text" placeholder="Searching...">
 						</span>
 						<a href="#" ng-click="panel.selectTab(6); main.searchSystem.showSearchField();"><img width="50" src="{% static "main/images/search_icon.png" %}" class="search-btn" alt=""></a>
 						<a ng-click="panel.selectTab(5);" href="#"><img width="50" src="{% static "main/images/settings_icon.png" %}" alt="" class="settings-btn"></a>
@@ -49,99 +49,6 @@
 					   	{% include "notes/parts/all_notes.html" %}
 						{% include "notes/parts/page_daily_journal.html" %}
 						{% include "notes/parts/page_settings.html" %}
-
-
-						<div ng-if="panel.isSelected(6)">
-						    <div class="note-block" ng-repeat="note in searchNotes">
-						        <div class="note-block-heading">
-						                    <div class="row">
-						                        <div class="col-xs-11">
-						                            <div class="row">
-						                                <span class="col-xs-3 note-block-date">[[ note.date | toSec | date: 'EEE, MMM dd, yyyy' ]]</span>
-						                                <div class="col-xs-3">
-						                                    <div class="select-style">
-						                                        <select ng-model='note.project' ng-change="main.changeMeta(note.path, 'project', note.project)" ng-options="option for option in main.user.projects track by option"></select>
-						                                    </div>
-						                                </div>
-						                                <div class="col-xs-3">
-						                                    <div class="select-style">
-						                                        <select ng-model='note.tag' ng-change="main.changeMeta(note.path, 'tag', note.tag)" ng-options="option for option in main.user.tags track by option"></select>
-						                                    </div>
-						                                </div>
-						                                <div class="col-xs-3">
-						                                    <form data="form_file_[[ note.path ]]" enctype="multipart/form-data">
-						                                        <input type="file" style="display:none" name="file" data-file="file_[[ note.path ]]" onchange="angular.element(this).scope().sendFileAjax()" />
-						                                    </form>
-						                                    <button class="btn btn-block insert_btn" ng-click="main.selectFile(note.path)">Insert File</button>
-						                                </div>
-						                            </div>
-						                        </div>
-						                        <div class="col-xs-1">
-						                            <div class="row pull-right">
-						                                <span class="glyphicon glyphicon-pencil btn-edit" data-toggle="modal" data-target="#edit-modal-[[ $index ]]"></span>
-						                                <span class="glyphicon glyphicon-remove btn-remove" data-toggle="modal" data-target="#remove-modal-[[ $index ]]"></span>
-						                            </div>
-
-						                            <div class="modal modal-remove fade" id="remove-modal-[[ $index ]]" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
-						                                <div class="modal-dialog" role="document">
-						                                    <div class="modal-content">
-						                                        <div class="modal-header">
-						                                            <!-- <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button> -->
-						                                            <h4 class="modal-title" id="myModalLabel">Remove note</h4>
-						                                        </div>
-						                                        <div class="modal-body">
-						                                            <p class="modal-text">If you remove this note You also remove all binding files. Are you sure that you want delete this note?</p>
-						                                        </div>
-						                                        <div class="modal-footer">
-						                                            <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
-						                                            <button type="button" class="btn btn-danger" data-dismiss="modal" ng-click="main.delNote(note.path)">Remove note</button>
-						                                        </div>
-						                                    </div>
-						                                </div>
-						                            </div>
-
-						                            <div class="modal modal-edit fade" id="edit-modal-[[ $index ]]" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
-						                                <div class="modal-dialog" role="document">
-						                                    <div class="modal-content">
-						                                        <div class="modal-header">
-						                                            <!-- <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button> -->
-						                                            <h4 class="modal-title" id="myModalLabel">Edit note</h4>
-						                                        </div>
-						                                        <div class="modal-body">
-						                                            <textarea class="form-control" id="note-edit-text-[[ $index ]]" rows="3">[[ note.text ]]</textarea>
-						                                        </div>
-						                                        <div class="modal-footer">
-						                                            <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
-						                                            <button type="button" class="btn btn-info" data-dismiss="modal" ng-click="main.editNote($index, note.path)">Edit note</button>
-						                                        </div>
-						                                    </div>
-						                                </div>
-						                            </div>
-
-						                        </div>
-						                    </div>
-						                </div>
-						                <div class="note-block-body">
-						                   <p>[[ note.text ]]</p>
-
-						                   <div class="row">
-						                        <br>
-						                        <div class="pull-right file-icons">
-						                            <a ng-href="[[main.url.getFileDownloadPath(file[0])]]" target="_blank" ng-repeat="file in note.files">
-						                                <img src="{% static "main/images/" %}[[ main.images.getImageByFormat(file[1]) ]]"  data-toggle="tooltip" data-placement="top" title="[[ file[0] ]]" alt="text_file" width="35">
-						                            </a>
-						                        </div>
-						                    </div>
-						                </div>
-						    </div>
-						</div>
-
-
-
-
-
-
-
 					</div>
 					{% include "notes/parts/timeliner.html" %}
 				</div>
