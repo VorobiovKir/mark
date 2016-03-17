@@ -6,13 +6,11 @@ from django.conf import settings
 
 
 def dropbox_get_note(client, path):
-    # # TEST TEST TEST
-    # admin = User.objects.get(pk=1)
+    """Dropbox get note
 
-    # client = dropbox_get_connection(admin, 'client')
-    # path = request.GET.get('path')
-    # return JsonResponse({'content': result})
+    Method get note's text
 
+    """
     try:
         with client.get_file(path) as f:
             result = f.read()
@@ -39,32 +37,27 @@ def format_date(clear_str, res_dict=None):
     if not res_dict:
         res_dict = {}
 
-    # !!!!!!!!!!!!!!!!!!!!!!!!!!!
     res_dict = OrderedDict(res_dict)
 
     file_info = clear_str.lower().split('/')
 
     try:
-        # res_dict[file_info[1]][file_info[2]][file_info[3]].append(file_info[4])
         res_dict[file_info[1]][file_info[2]][file_info[3]].append(clear_str)
     except:
         if file_info[1] in res_dict:
             if file_info[2] in res_dict[file_info[1]]:
                 res_dict[file_info[1]][file_info[2]].update({
-                    # file_info[3]: [file_info[4]]
                     file_info[3]: [clear_str]
                 })
             else:
                 res_dict[file_info[1]].update({
                     file_info[2]: {
-                        # file_info[3]: [file_info[4]]
                         file_info[3]: [clear_str]
                     }})
         else:
             res_dict.update({
                 file_info[1]: {
                     file_info[2]: {
-                        # file_info[3]: [file_info[4]]
                         file_info[3]: [clear_str]
                     }
                 }
@@ -89,6 +82,18 @@ def sorted_by_time(clear_file_list):
 
 
 def format_get_dict_full_info(clear_file_list, client):
+    """Format get dict full info
+
+    Method get note and return object
+    format {
+        path:
+        project:
+        tag:
+        time:
+        date:
+        text:
+    }
+    """
     dict_key = 1
     res_dict = {}
     for file_name in clear_file_list:
@@ -107,6 +112,18 @@ def format_get_dict_full_info(clear_file_list, client):
 
 
 def format_get_list_full_info(clear_file_list, client):
+    """Format get list full info
+
+    Method get note and return object
+    format {
+        path:
+        project:
+        tag:
+        time:
+        date:
+        text:
+    }
+    """
     res_dict = []
     for file_name in clear_file_list:
         date, name = file_name.split('/deez_')
@@ -130,58 +147,3 @@ def format_get_list_full_info(clear_file_list, client):
             'files': res_files
         })
     return res_dict
-
-
-
-# !!!!!!!!!   collections.OrderedDict
-
-# def format_order_date(clear_str, res_dict=None):
-#     """format date
-
-#     Function get clear string {ex. /2016/jan/14/deez_something.txt} and
-#     return dict:
-#         ex. {'2016': {
-#             'jan': {
-#                 '14': [deez_something.txt]
-#             }
-#         }}
-
-#     Returns:
-#         [dict] -- dictionary for formating timeliner
-#     """
-#     file_info = clear_str.split('/')
-
-#     if not res_dict:
-#         return [{
-#             file_info[1]: [{
-#                 file_info[2]: [{
-#                     file_info[3]: [file_info[4]]
-#                 }]
-#             }]
-#         }]
-
-
-
-#     try:
-#         res_dict[file_info[1]][file_info[2]][file_info[3]].append(file_info[4])
-#     except:
-#         if file_info[1] in res_dict:
-#             if file_info[2] in res_dict[file_info[1]]:
-#                 res_dict[file_info[1]][file_info[2]].update({
-#                     file_info[3]: [file_info[4]]
-#                 })
-#             else:
-#                 res_dict[file_info[1]].update({
-#                     file_info[2]: {
-#                         file_info[3]: [file_info[4]]
-#                     }})
-#         else:
-#             res_dict.update({
-#                 file_info[1]: {
-#                     file_info[2]: {
-#                         file_info[3]: [file_info[4]]
-#                     }
-#                 }
-#             })
-
-#     return res_dict

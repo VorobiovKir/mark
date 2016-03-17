@@ -40,25 +40,6 @@ var MainController = function($http, $scope) {
     }
 
     this.images = {
-        formats: {
-            'application/pdf': 'pdf.png',
-            'application/vnd.ms-powerpoint': 'powerpoint.png',
-            // excels formats
-            'application/vnd.ms-excel': 'excel.png',
-            'application/msexcel': 'excel.png',
-            'application/x-msexcel': 'excel.png',
-            'application/x-ms-excel': 'excel.png',
-            'application/x-excel': 'excel.png',
-            'application/x-dos_ms_excel': 'excel.png',
-            'application/xls': 'excel.png',
-            'application/x-xls': 'excel.png',
-            'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet': 'excel.png',
-            // words formats
-            'application/msword': 'word.png',
-            'application/vnd.openxmlformats-officedocument.wordprocessingml.document': 'word.png',
-            'text': 'text.png',
-            'image': 'any_image_type.png'
-        },
 
         getImageByFormat: function(contentType) {
             var content = contentType.split('/')[0];
@@ -160,7 +141,6 @@ var MainController = function($http, $scope) {
 
         showSearchField: function() {
             $('#searchField').val('');
-            // this.prepairAutocomplete();
             $scope.searchResult = '';
         },
 
@@ -574,6 +554,7 @@ var MainController = function($http, $scope) {
         that.user.choices.tags = '';
         that.user.choices.errors.projects = '';
         that.user.choices.errors.tags = '';
+        that.messages.success.settings = '';
     }
 
     this.startPage = function() {
