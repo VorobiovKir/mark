@@ -365,7 +365,11 @@ var MainController = function($http, $scope) {
         } else if (page == 1) {
             return true;
         } else if (page == 6) {
-            return (note.text.search($scope.searchTest) != -1)
+            if ($scope.searchTest) {
+                return (note.text.search($scope.searchTest) != -1);
+            } else {
+                return false;
+            }
         }
     }
 
