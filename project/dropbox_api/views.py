@@ -5,7 +5,8 @@ from django.shortcuts import redirect
 from django.conf import settings
 from django.core.urlresolvers import reverse
 from django.http import (HttpResponseRedirect, HttpResponse,
-                         HttpResponseForbidden, HttpResponseServerError, FileResponse)
+                         HttpResponseForbidden, HttpResponseServerError,
+                         FileResponse)
 from django.contrib.auth.models import User
 from django.http import JsonResponse
 from django.utils import timezone
@@ -286,23 +287,6 @@ def get_notes_by_search(dbx):
 
     return result
 
-
-# def dropbox_get_notes(request):
-#     # TEST TEST TEST
-#     admin = User.objects.get(pk=1)
-
-#     dbx = dropbox_get_connection(admin)
-
-#     all_files = dbx.files_list_folder('', recursive=True).entries
-#     files = []
-#     pattern = settings.REGEX_FILES
-#     for dirty_file in all_files:
-#         if isinstance(dirty_file, FileMetadata):
-#             if re.match(pattern, dirty_file.path_lower):
-#                 files.append(dirty_file.path_lower)
-
-#     return JsonResponse({'paths': files, 'length': len(all_files)})
-
 # -----------------------------------------------------------
 
 
@@ -369,7 +353,8 @@ def dropbox_change_meta_note(request):
     meta_name = request.GET.get('meta_name')
     splitted_path = path.split('/')
 
-    if client.search('/{}/'.format('/'.join(splitted_path[1:-1])), splitted_path[-1]):
+    if client.search(
+        '/{}/'.format('/'.join(splitted_path[1:-1])), splitted_path[-1]):
         splitted_note_name = path.split('_')
 
         if meta_type == 'project':
@@ -383,23 +368,6 @@ def dropbox_change_meta_note(request):
         return JsonResponse({'res': 'success'})
     else:
         return HttpResponseServerError('File doesn\'t find')
-# -----------------------------------------------------------
-
-
-# --------------------- Search Note/Folder ------------------
-def dropbox_search(request):
-    # TEST TEST TEST
-    # admin = User.objects.get(pk=1)
-    user = request.user
-    dbx = dropbox_get_connection(user)
-
-    query = request.GET.get('query')
-    result = []
-    matches = dbx.files_search('', query).matches
-
-    for search_match in matches:
-        result.append(search_match.metadata.path_lower)
-    return JsonResponse({'result': result})
 # -----------------------------------------------------------
 
 
@@ -455,8 +423,11 @@ def dropbox_get_meta_data(type_meta_data, api):
 
 
 def dropbox_add_or_del_meta_files(request):
-    # TEST TEST TEST
-    # admin = User.objects.get(pk=1)
+    """Dropbox add or delete meta files
+
+    This method allows add or delete meta files (project, tag name)
+
+    """
     user = request.user
     client = dropbox_get_connection(user, 'client')
 
@@ -492,18 +463,26 @@ def dropbox_add_or_del_meta_files(request):
 
 
 def format_list_to_date(request):
+    """format list to date
+
+    This method allows get format date list
+
+    """
     params = json.loads(request.body)
     notes = params.get('notes')
     new_note = params.get('new_note').get('path')
-# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
     notes = custom_funcs.format_date(new_note, notes)
 
     return JsonResponse({'notes': notes})
 
 
 def dropbox_upload_file(request):
-    # TEST TEST TEST
-    # admin = User.objects.get(pk=1)
+    """Dropbox upload file
+
+    This method allows upload file into dropbox
+
+    """
     user = request.user
     client = dropbox_get_connection(user, 'client')
 
@@ -551,6 +530,11 @@ def dropbox_upload_file(request):
 
 
 def dropbox_download_file(request):
+    """Dropbox download file
+
+    This method allows get file from dropbox server
+
+    """
     user = request.user
     dbx = dropbox_get_connection(user)
     client = dropbox_get_connection(user, 'client')
@@ -578,6 +562,11 @@ def dropbox_download_file(request):
 
 
 def dropbox_delete_note(request):
+    """Dropbox delete note
+
+    This method allows delete note with all information, files
+
+    """
     user = request.user
     client = dropbox_get_connection(user, 'client')
 
@@ -603,128 +592,3 @@ def dropbox_delete_note(request):
         return HttpResponseServerError('file is not find')
 
     return JsonResponse({'res': 'success'})
-
-
-
-        # upload_file = file.read()
-
-        # uploader = client.get_chunked_uploader(upload_file, size)
-        # while uploader.offset < size:
-        #     try:
-        #         upload = uploader.upload_chunked()
-        #     except:
-        #         pass  # doing something with error
-        # uploader.finish('/thisworks.txt')
-
-    # uploader = client.get_chunked_uploader(bigFile, size)
-    # print "uploading: ", size
-    # while uploader.offset < size:
-    #     try:
-    #         upload = uploader.upload_chunked()
-    #     except rest.ErrorResponse, e:
-    #         pass
-    #         # perform error handling and retry logic
-
-    # uploader.finish('/bigFile.txt')
-
-
-# def dropbox_create_note(request):
-#     # TEST TEST TEST
-#     admin = User.objects.get(pk=1)
-#     client = dropbox_get_connection(admin, 'client')
-#     text = 'test from view'
-
-#     path = timezone.now().strftime('/%Y/%b/%d/deez_%I:%M%p.txt')
-#     client.put_file(path, text)
-
-#     return JsonResponse({'status': 'Ok'})
-
-
-# def dropbox_edit_note(request):
-#     # TEST TEST TEST
-#     admin = User.objects.get(pk=1)
-#     client = dropbox_get_connection(admin, 'client')
-#     text = 'test from edit note view'
-
-#     path = '/2016/feb/29/deez_09:27AM (1).txt'
-
-#     client.put_file(path, text, overwrite=True)
-
-#     return JsonResponse({'status': 'Ok'})
-
-
-# def format_date(clear_str, res_dict=None):
-#     if not res_dict:
-#         res_dict = {}
-
-#     file_info = clear_str.split('/')
-
-#     try:
-#         res_dict[file_info[1]][file_info[2]][file_info[3]].append(file_info[4])
-#     except:
-#         if file_info[1] in res_dict:
-#             if file_info[2] in res_dict[file_info[1]]:
-#                 res_dict[file_info[1]][file_info[2]].update({
-#                     file_info[3]: [file_info[4]]
-#                 })
-#             else:
-#                 res_dict[file_info[1]].update({
-#                     file_info[2]: {
-#                         file_info[3]: [file_info[4]]
-#                     }})
-#         else:
-#             res_dict.update({
-#                 file_info[1]: {
-#                     file_info[2]: {
-#                         file_info[3]: [file_info[4]]
-#                     }
-#                 }
-#             })
-
-#     return res_dict
-
-
-
-
-# FILTER_REGEXP = [
-#     '(?:19|20)\d\d',
-#     settings.REGEXP_FOR_MONTH_FOLDERS,
-#     '\d\d',
-# ]
-
-
-# def dropbox_filter_folder(path, step=1) {
-#     folders = dbx.files_list_folder(path).entries
-#     regexp = FILTER_REGEXP[step]
-#     for folder in folders:
-#         if isinstance(folder, FolderMetadata):
-#             if re.match(regexp, folder.path_lower.split('/')[step]):
-#                 if step == 3:
-#                     res.append(folder.path_lower)
-#                 dropbox_filter_folder(folder.path_lower, step++)
-# }
-
-
-    # years = []
-    # monthes = []
-    # days = []
-    # for clean_first_folder in dirty_years_folders:
-    #     if isinstance(clean_first_folder, FolderMetadata):
-    #         if re.match('(?:19|20)\d\d', clean_first_folder.path_lower.split('/')[1]):
-    #             years.append(clean_first_folder.path_lower)
-
-    # for folder in years:
-    #     all_files = dbx.files_list_folder(folder).entries
-    #     for month in all_files:
-    #         if isinstance(month, FolderMetadata):
-    #             if re.match('{}'.format('|'.join(settings.FOLDER_NAME_MONTH)), month.path_lower.split('/')[2]):
-    #                 monthes.append(month.path_lower)
-
-    # for folder in monthes:
-    #     all_files = dbx.files_list_folder(folder).entries
-    #     for day in all_files:
-    #         if isinstance(day, FolderMetadata):
-    #             if re.match('\d\d', day.path_lower.split('/')[3]):
-    #                 days.append(day.path_lower)
-
-    # return JsonResponse({'days': days})
