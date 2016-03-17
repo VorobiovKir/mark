@@ -29,19 +29,19 @@
 		<div id="load-screen">
 			<div ng-controller="PanelController as panel">
 				<div class="page-header">
-					<a ng-click="panel.selectTab(1); main.refreshSettings();" href="#" class="main"><img width="80" src="{% static 'main/images/deez_notes_logo.png' %}"></a>
+					<a ng-click="panel.selectTab(1); main.clearMessages();" href="#" class="main"><img width="80" src="{% static 'main/images/deez_notes_logo.png' %}"></a>
 					<p class="pull-right">
-						<span ng-show="panel.isSelected(6); main.refreshSettings();" class="search-field">
+						<span ng-show="panel.isSelected(6); main.clearMessages();" class="search-field">
 							<input class="form-control typeahead" id="searchField" ng-keydown="press($event)" type="text" placeholder="Searching...">
 						</span>
-						<a href="#" ng-click="panel.selectTab(6); main.refreshSettings(); main.searchSystem.showSearchField();"><img width="50" src="{% static "main/images/search_icon.png" %}" class="search-btn" alt=""></a>
-						<a ng-click="panel.selectTab(5); main.refreshSettings();" href="#"><img width="50" src="{% static "main/images/settings_icon.png" %}" alt="" class="settings-btn"></a>
+						<a href="#" ng-click="panel.selectTab(6); main.clearMessages(); main.searchSystem.showSearchField();"><img width="50" src="{% static "main/images/search_icon.png" %}" class="search-btn" alt=""></a>
+						<a ng-click="panel.selectTab(5); main.clearMessages();" href="#"><img width="50" src="{% static "main/images/settings_icon.png" %}" alt="" class="settings-btn"></a>
 					</p>
 				</div>
 				<div class="page-container" >
-					<a ng-click="panel.selectTab(2); main.refreshSettings();" href="#" class="daily_journal" data-toggle="tooltip" data-placement="top" title="Daily Journal"><img width="80" src="{% static 'main/images/daily_journal_icon.png' %}"/></a>
-					<a ng-click="panel.selectTab(3); main.refreshSettings();" href="#" class="notebook_icon" data-toggle="tooltip" data-placement="top" title="Notebook"><img width="80" src="{% static 'main/images/notebook_icon.png' %}"/></a>
-					<a ng-click="panel.selectTab(4); main.refreshSettings();" href="#" class="tag_icon" data-toggle="tooltip" data-placement="top" title="Tag"><img width="80" src="{% static 'main/images/tag_icon.png' %}"/></a>
+					<a ng-click="panel.selectTab(2); main.clearMessages();" href="#" class="daily_journal" data-toggle="tooltip" data-placement="top" title="Daily Journal"><img width="80" src="{% static 'main/images/daily_journal_icon.png' %}"/></a>
+					<a ng-click="panel.selectTab(3); main.clearMessages();" href="#" class="notebook_icon" data-toggle="tooltip" data-placement="top" title="Notebook"><img width="80" src="{% static 'main/images/notebook_icon.png' %}"/></a>
+					<a ng-click="panel.selectTab(4); main.clearMessages();" href="#" class="tag_icon" data-toggle="tooltip" data-placement="top" title="Tag"><img width="80" src="{% static 'main/images/tag_icon.png' %}"/></a>
 
 					<div class="container main-container col-xs-8 col-xs-offset-2">
 						<h1 class="text-center">Hello, {{ request.user.username|title }}!</h1>

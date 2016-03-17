@@ -554,6 +554,9 @@ var MainController = function($http, $scope) {
         that.user.choices.tags = '';
         that.user.choices.errors.projects = '';
         that.user.choices.errors.tags = '';
+    }
+
+    this.clearMessages = function() {
         that.messages.success.settings = '';
     }
 
