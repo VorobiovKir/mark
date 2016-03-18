@@ -292,3 +292,7 @@ ul li {
 .tt-suggestion p {
     margin: 0;
 }
+.tt-menu {
+  max-height: 160px;
+  overflow-y: auto;
+}
