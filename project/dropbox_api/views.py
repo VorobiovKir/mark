@@ -354,7 +354,7 @@ def dropbox_change_meta_note(request):
     splitted_path = path.split('/')
 
     if client.search(
-        '/{}/'.format('/'.join(splitted_path[1:-1])), splitted_path[-1]):
+            '/{}/'.format('/'.join(splitted_path[1:-1])), splitted_path[-1]):
         splitted_note_name = path.split('_')
 
         if meta_type == 'project':
@@ -547,11 +547,11 @@ def dropbox_download_file(request):
             header = file.getheaders()
             content_type = header.get('Content-Type')
 
-            # response = HttpResponse(content=file.read())
-            # response['Content-Disposition'] = 'attachment; filename="foo.pdf"'
-            # response['Content-Type'] = 'application/pdf'
-
+            name = json.loads(
+                header['x-dropbox-metadata']).get('path').rsplit('/', 1)[-1]
             response = FileResponse(file)
+            response['Content-Disposition'] =\
+                'inline; filename="{}"'.format(name)
             response['Content-Type'] = content_type
 
             return response
