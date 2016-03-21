@@ -12,11 +12,10 @@ from .forms import AuthenticationForm, RegistrationForm
 
 class LoginView(FormView):
     """Login View
-
-        View allows User enter to system. If User successfully login
-    system check if user is active and has access token, if User hasn't
-    system redirect User to Dropbox authorization to get access_token, if
-    User is active and has access token User redirect on the main page
+    View allows User enter to the system. If User successfully login, system
+    checks if user is active and has access token, if User hasn't, system
+    redirects User to Dropbox authorization to get access_token,
+    if User is active and has access token User redirected to the main page
 
     Extends:
         django.views.generic.FormView
@@ -58,10 +57,10 @@ class LoginView(FormView):
 class RegisterView(FormView):
     """Registration View
 
-        View allows User registration. If User successfully registration
-    User redirect on Dropbox authorization for get access token, if User
-    got token, this token save in DB in Drpopbox Model, than User redirect
-    on the main page
+    View allows User registration.
+    If User registration was successfull, User redirected to the Dropbox
+    authorization to get access token, if User got token, this token saved
+    in DB in Drpopbox Model, than User redirects to the main page
 
     Extends:
         django.views.generic.FormView
