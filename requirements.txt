@@ -1,4 +1,4 @@
-Django==1.9.2
+Django==1.11.29
 argparse==1.2.1
 django-debug-toolbar==1.4
 dropbox==5.2.2
